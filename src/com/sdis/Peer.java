@@ -48,7 +48,7 @@ public class Peer {
     }
 
     public void initialize(){
-        System.out.println("ip: " + MC_IP + "  Port: " + MC_PORT);
+       System.out.println("ip: " + MC_IP + "  Port: " + MC_PORT);
         try {
             channelSocket = new MulticastSocket(MC_PORT);
         } catch (IOException e) {

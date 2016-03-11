@@ -6,9 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="53311f77-5e94-4e0c-9676-53440f347c55" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/sdis/RestoreProtocol.java" afterPath="$PROJECT_DIR$/src/com/sdis/RestoreProtocol.java" />
-    </list>
+    <list default="true" id="53311f77-5e94-4e0c-9676-53440f347c55" name="Default" comment="" />
     <ignored path="SDIS-projeto1.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -679,12 +677,12 @@
       <updated>1457621325831</updated>
       <workItem from="1457621330696" duration="6516000" />
       <workItem from="1457657305536" duration="80000" />
-      <workItem from="1457695279129" duration="3125000" />
+      <workItem from="1457695279129" duration="3195000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9721000" />
+    <option name="totallyTimeSpent" value="9791000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="4" y="24" width="1436" height="799" extended-state="0" />

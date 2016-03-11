@@ -11,6 +11,7 @@ public class Peer {
     private final InetAddress MC_IP, MDB_IP, MDR_IP;
     private final int MC_PORT, MDB_PORT, MDR_PORT;
     private MulticastSocket channelSocket,backupSocket, restoreSocket;
+    private MulticastThread multicastControl,multicastDataBackup,multicastDataRestore;
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort){
         ID = id;
@@ -43,6 +44,9 @@ public class Peer {
         }
         MDR_IP = mdr_ip;
         MDR_PORT = mdrPort;
+        multicastControl = new MulticastThread();
+        multicastDataBackup = new MulticastThread();
+        multicastDataRestore = new MulticastThread();
 
         active = true;
     }
@@ -90,6 +94,7 @@ public class Peer {
     }
 
     public void start(){
+        multicastControl.run();
         while (active){
 
         }

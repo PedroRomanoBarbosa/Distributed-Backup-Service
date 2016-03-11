@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="SDIS-projeto1:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/SDIS_projeto1_jar</output-path>
-    <root id="archive" name="SDIS-projeto1.jar">
-      <element id="module-output" name="SDIS-projeto1" />
-    </root>
-  </artifact>
-</component>

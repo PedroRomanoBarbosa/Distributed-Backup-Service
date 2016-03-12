@@ -1,7 +1,6 @@
 package com.sdis;
 
-public class RestoreProtocol implements Protocol{
-
+public class FileDeletionProtocol implements Protocol{
 
     @Override
     public void send() {

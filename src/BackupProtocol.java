@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class BackupProtocol {
     private Scanner reader = new Scanner(System.in);
+    private int MaxReplicationDegree = 9;
 
     public BackupProtocol() {
         //Verificar a validade do path/ficheiro
@@ -24,7 +25,7 @@ public class BackupProtocol {
         //Grau de replicacao
         System.out.print("Replication Degree (1-9): ");
         int replicationDegree = 0;
-        while(replicationDegree < 1 || replicationDegree > 9)  {
+        while(replicationDegree < 1 || replicationDegree > MaxReplicationDegree)  {
             try {
                 replicationDegree = reader.nextInt();
                 break;

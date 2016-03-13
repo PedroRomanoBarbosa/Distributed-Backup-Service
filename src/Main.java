@@ -34,12 +34,13 @@ public class Main {
         int port3 = Integer.parseInt(args[6]);
         Peer p = new Peer(ip,args[1],port1,args[3],port2,args[5],port3);
         p.initialize();
-        p.start();
+        //p.start();
 
         //MENU INICIAL
         int option = 0;
         while (option != 5) {
-            System.out.println("\n1. File Backup");
+            System.out.println("\n---- Menu ----");
+            System.out.println("1. File Backup");
             System.out.println("2. File Restore");
             System.out.println("3. File Deletion");
             System.out.println("4. Space Reclaiming");
@@ -51,19 +52,20 @@ public class Main {
 
                 switch (option) {
                     case 1:
-                        System.out.println("---- File Backup ----");
+                        System.out.println("\n---- File Backup ----");
                         //TODO Chamar a funcao/classe aqui
+                        new BackupProtocol();
                         break;
                     case 2:
-                        System.out.println("---- File Restore ----");
+                        System.out.println("\n---- File Restore ----");
                         //TODO Chamar a funcao/classe aqui
                         break;
                     case 3:
-                        System.out.println("---- File Deletion ----");
+                        System.out.println("\n---- File Deletion ----");
                         //TODO Chamar a funcao/classe aqui
                         break;
                     case 4:
-                        System.out.println("---- Space Reclaiming ----");
+                        System.out.println("\n---- Space Reclaiming ----");
                         //TODO Chamar a funcao/classe aqui
                         break;
                     case 5:

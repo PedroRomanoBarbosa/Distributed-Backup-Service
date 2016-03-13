@@ -9,19 +9,23 @@ public class BackupProtocol {
 
     public BackupProtocol() {
         //Verificar a validade do path/ficheiro
-        System.out.print("Path to file to backup: ");
-        String filePath = reader.next();
+        String filePath;
+
         while (true) {
+            System.out.print("Path to file to backup: ");
+            filePath = reader.next();
+
             try {
                 if (Files.isDirectory(Paths.get(filePath)) || !Files.exists(Paths.get(filePath)))
                     throw new IOException();
 
                 break;
             } catch(IOException e){
-                System.out.println("Error: Not a valid path for a file.");
+                System.out.println("Error: Not a valid path for a file!");
                 continue;
             }
         }
+
         //Grau de replicacao
         System.out.print("Replication Degree (1-9): ");
         int replicationDegree = 0;

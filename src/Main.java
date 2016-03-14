@@ -40,8 +40,8 @@ public class Main {
         int option = 0;
         while (option != 5) {
             System.out.println("\n---- Menu ----");
-            System.out.println("1. File Backup");
-            System.out.println("2. File Restore");
+            System.out.println("1. Chunk Backup");
+            System.out.println("2. Chunk Restore");
             System.out.println("3. File Deletion");
             System.out.println("4. Space Reclaiming");
             System.out.println("5. Exit");

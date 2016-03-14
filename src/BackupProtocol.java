@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 public class BackupProtocol {
@@ -14,6 +15,7 @@ public class BackupProtocol {
         while (true) {
             System.out.print("Path to file to backup: ");
             filePath = reader.next();
+            //filePath = "C:\\Users\\User\\Desktop\\SDIS.txt";
 
             try {
                 if (Files.isDirectory(Paths.get(filePath)) || !Files.exists(Paths.get(filePath)))
@@ -39,7 +41,21 @@ public class BackupProtocol {
             }
         }
 
-        File fileToBackup = new File(filePath, replicationDegree);
+        File fileToBackup = null;
+        try {
+            fileToBackup = new File(filePath, replicationDegree);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < fileToBackup.getChunksSize(); i++) {
+            //TODO Alterar o campo 1.0 para Versao Real e Adicionar SenderID
+            String messageHeader = "PUTCHUNK " + "1.0" + " " + fileToBackup.getFileID() + " " + i + " " +
+                   fileToBackup.getReplicationDegree() + " " + "\r\n\r\n";
+
+            System.out.println(messageHeader);
+            //String fullMessage = concatByteArrays(messageHeader.getBytes(), fileToBackup.getChunk(i));
+        }
     }
 
     public void send(){

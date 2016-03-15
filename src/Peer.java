@@ -8,7 +8,7 @@ public class Peer {
     private boolean active;
     private final InetAddress MC_IP, MDB_IP, MDR_IP;
     private final int MC_PORT, MDB_PORT, MDR_PORT;
-    private MulticastSocket controlSocket,backupSocket, restoreSocket;
+    private DataSocket controlSocket,backupSocket, restoreSocket;
     private MulticastThread multicastControl,multicastDataBackup,multicastDataRestore;
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort){
@@ -49,7 +49,7 @@ public class Peer {
     public void initialize(){
        System.out.println("ip: " + MC_IP + "  Port: " + MC_PORT);
         try {
-            controlSocket = new MulticastSocket(MC_PORT);
+            controlSocket = new DataSocket(MC_PORT);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error creating multicast channel socket");
@@ -62,7 +62,7 @@ public class Peer {
         }
 
         try {
-            backupSocket = new MulticastSocket(MDB_PORT);
+            backupSocket = new DataSocket(MDB_PORT);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error creating multicast data backup channel socket");
@@ -75,7 +75,7 @@ public class Peer {
         }
 
         try {
-            restoreSocket = new MulticastSocket(MDR_PORT);
+            restoreSocket = new DataSocket(MDR_PORT);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error creating multicast data restore channel socket");

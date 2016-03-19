@@ -1,4 +1,5 @@
-import java.io.IOException;
+import Utils.Regex;
+
 import java.util.Scanner;
 
 public class Main {
@@ -8,6 +9,14 @@ public class Main {
             System.err.println("Invalid number of arguments");
             System.exit(1);
         }
+
+        int ip = Integer.parseInt(args[0]);
+        int port1 = Integer.parseInt(args[2]);
+        int port2 = Integer.parseInt(args[4]);
+        int port3 = Integer.parseInt(args[6]);
+        Peer p = new Peer(ip,args[1],port1,args[3],port2,args[5],port3);
+        p.initialize();
+        p.start();
 
         System.out.println("===== Distributed Backup Service =====");
         Scanner reader = new Scanner(System.in);
@@ -27,14 +36,6 @@ public class Main {
                 System.out.println("Please choose a valid directory!");
             }*/
         }
-
-        int ip = Integer.parseInt(args[0]);
-        int port1 = Integer.parseInt(args[2]);
-        int port2 = Integer.parseInt(args[4]);
-        int port3 = Integer.parseInt(args[6]);
-        Peer p = new Peer(ip,args[1],port1,args[3],port2,args[5],port3);
-        p.initialize();
-        //p.start();
 
         //MENU INICIAL
         int option = 0;

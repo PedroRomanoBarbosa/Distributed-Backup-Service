@@ -10,6 +10,7 @@ public class Peer {
     private final int MC_PORT, MDB_PORT, MDR_PORT;
     private DataSocket controlSocket,backupSocket, restoreSocket;
     private MulticastThread multicastControl,multicastDataBackup,multicastDataRestore;
+    private RestoreThread restoreThread;
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort){
         ID = id;
@@ -87,15 +88,27 @@ public class Peer {
             System.err.println("Error joining multicast data restore channel group");
         }
 
-        multicastControl = new MulticastThread(controlSocket);
-        multicastDataBackup = new MulticastThread(backupSocket);
-        multicastDataRestore = new MulticastThread(restoreSocket);
+        multicastControl = new MulticastThread(this);
+        multicastDataBackup = new MulticastThread(this);
+        restoreThread = new RestoreThread(this);
     }
 
     public void start(){
-        multicastControl.run();
+        restoreThread.start();
         while (active){
 
         }
+    }
+
+    public DataSocket getRestoreSocket(){
+        return restoreSocket;
+    }
+
+    public DataSocket getBackupSocket(){
+        return backupSocket;
+    }
+
+    public DataSocket getControlSocket(){
+        return controlSocket;
     }
 }

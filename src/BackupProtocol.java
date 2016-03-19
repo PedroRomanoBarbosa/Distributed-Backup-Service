@@ -10,7 +10,7 @@ public class BackupProtocol {
     private int maxReplicationDegree = 9;
     private int maxTriesPerChunk = 5;
 
-    public BackupProtocol(Peer peer) {
+    public BackupProtocol(Peer peer, FileStorage fileStorage) {
         //Verificar a validade do path/ficheiro
         String filePath;
 
@@ -49,6 +49,8 @@ public class BackupProtocol {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
+        fileStorage.addBackedUpFile(fileToBackup);
 
         for (int i = 0; i < fileToBackup.getChunks().size(); i++) {
 

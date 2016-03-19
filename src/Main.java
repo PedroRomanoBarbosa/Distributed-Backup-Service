@@ -35,6 +35,7 @@ public class Main {
                     throw new IOException();
 
                 else {
+                    //Load
                     try {
                         FileInputStream fis = new FileInputStream(path + java.io.File.separator + ".info");
                         ObjectInputStream ois = new ObjectInputStream(fis);
@@ -48,6 +49,7 @@ public class Main {
                         fileStorage = new FileStorage(path);
                     }
 
+                    //Save
                     try {
                         FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + ".info");
                         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -86,7 +88,7 @@ public class Main {
                 switch (option) {
                     case 1:
                         System.out.println("\n---- File Backup ----");
-                        new BackupProtocol(p);
+                        new BackupProtocol(p, fileStorage);
                         break;
                     case 2:
                         System.out.println("\n---- File Restore ----");

@@ -12,4 +12,9 @@ public class FileStorage implements Serializable {
         path = p;
     }
 
+    public void addBackedUpFile(File file) {
+        if (!backedUpFiles.contains(file))
+            backedUpFiles.add(file);
+    }
+
 }

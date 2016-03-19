@@ -1,27 +1,42 @@
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 public class File {
+    private java.io.File actualFile;
     private String id;
     private String pathFile;
     private int replicationDegree;
     private int chunksSize;
+    private int chunkSize = 64 * 1000;
+    private HashMap<Integer, byte[]> chunks = new HashMap<Integer, byte[]>();
+    // private ArrayList<byte[]> chunks = new ArrayList<>();
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
 
         pathFile = filePath;
         replicationDegree = repDegree;
 
-        chunksSize = (int) Math.ceil((new java.io.File(filePath).length() / (double) 64000));
+        chunksSize = (int) Math.ceil((new java.io.File(filePath).length() / (double) chunkSize));
 
         //CRIAR O CAMPO ID COM SHA256
-        String idAux = pathFile + Long.toString(new java.io.File(pathFile).lastModified());
+        actualFile = new java.io.File(pathFile);
+        String idAux = pathFile + actualFile.getName() + Long.toString(actualFile.lastModified());
         id = sha256(idAux);
+
+        try {
+            buildChunks(filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     //FONT: http://www.sha1-online.com/sha256-java/
-    static String sha256(String input) throws NoSuchAlgorithmException {
+    private static String sha256(String input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA-256");
         byte[] result = mDigest.digest(input.getBytes());
         StringBuffer sb = new StringBuffer();
@@ -33,8 +48,25 @@ public class File {
         return sb.toString();
     }
 
+    //FONT: http://stackoverflow.com/questions/9588348/java-read-file-by-chunks
+    private void buildChunks(String filePath) throws IOException {
+        byte[] buffer = new byte[chunkSize];
+        FileInputStream in = new FileInputStream(filePath);
 
+        int bytesRead = in.read(buffer);
 
+        while (bytesRead != -1) {
+
+            chunks.put(chunks.size(), buffer);
+           // chunks.put(chunksSize, buffer);
+            bytesRead = in.read(buffer);
+
+        }
+    }
+
+    public HashMap<Integer, byte[]> getChunks(){
+        return chunks;
+    }
 
     public int getReplicationDegree() {
         return replicationDegree;

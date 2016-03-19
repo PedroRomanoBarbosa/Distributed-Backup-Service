@@ -99,6 +99,10 @@ public class Peer {
 
         }
     }
+	
+	public final int getID() {
+        return ID;
+    }
 
     public DataSocket getRestoreSocket(){
         return restoreSocket;

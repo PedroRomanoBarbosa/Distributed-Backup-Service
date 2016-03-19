@@ -1,8 +1,10 @@
 import Utils.Regex;
 
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
+    public static FileStorage fileStorage = null;
 
     public static void main(String[] args) {
         if(args.length != 7){
@@ -10,11 +12,8 @@ public class Main {
             System.exit(1);
         }
 
-        int ip = Integer.parseInt(args[0]);
-        int port1 = Integer.parseInt(args[2]);
-        int port2 = Integer.parseInt(args[4]);
-        int port3 = Integer.parseInt(args[6]);
-        Peer p = new Peer(ip,args[1],port1,args[3],port2,args[5],port3);
+        //Inicia o Peer
+        Peer p = new Peer(Integer.parseInt(args[0]),args[1],Integer.parseInt(args[2]),args[3],Integer.parseInt(args[4]),args[5],Integer.parseInt(args[6]));
         p.initialize();
         p.start();
 
@@ -23,24 +22,57 @@ public class Main {
 
         //INPUT PARA O PATH DO LOCAL DE ARMAZENAMENTO DOS CHUNKS
         while (true) {
-            //try {
+            try {
                 System.out.print("Path to the data stored: ");
                 String path = reader.next();
 
                 /*
-                TODO Verificar o path e fazer load da database
+                Faz load da database
                  */
+                java.io.File file = new java.io.File(path);
 
-                break;
-            /*} catch(IOException e){
-                System.out.println("Please choose a valid directory!");
-            }*/
+                if(!file.isDirectory())
+                    throw new IOException();
+
+                else {
+                    try {
+                        FileInputStream fis = new FileInputStream(path + java.io.File.separator + ".info");
+                        ObjectInputStream ois = new ObjectInputStream(fis);
+
+                        fileStorage = (FileStorage) ois.readObject();
+
+                        ois.close();
+                        fis.close();
+
+                    } catch (Exception e) {
+                        fileStorage = new FileStorage(path);
+                    }
+
+                    try {
+                        FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + ".info");
+                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+                        oos.writeObject(fileStorage);
+
+                        oos.close();
+                        fos.close();
+
+                    } catch (Exception e) {
+
+                    }
+
+                    break;
+                }
+
+            } catch(IOException e){
+                System.out.println("Please choose a valid directory!\n");
+            }
         }
 
         //MENU INICIAL
         int option = 0;
         while (option != 5) {
-            System.out.println("\n----- Menu -----");
+            System.out.println("\n\n----- Menu -----");
             System.out.println("1. Chunk Backup");
             System.out.println("2. Chunk Restore");
             System.out.println("3. File Deletion");
@@ -54,7 +86,6 @@ public class Main {
                 switch (option) {
                     case 1:
                         System.out.println("\n---- File Backup ----");
-                        //TODO Chamar a funcao/classe aqui
                         new BackupProtocol(p);
                         break;
                     case 2:
@@ -63,7 +94,7 @@ public class Main {
                         break;
                     case 3:
                         System.out.println("\n---- File Deletion ----");
-                        //TODO Chamar a funcao/classe aqui
+                        new FileDeletionProtocol(p);
                         break;
                     case 4:
                         System.out.println("\n---- Space Reclaiming ----");
@@ -77,7 +108,7 @@ public class Main {
                         break;
                 }
             } catch (NumberFormatException ex) {
-                System.out.println("Select a valid option!");
+                System.out.println("Select a valid option!\n");
             }
         }
 

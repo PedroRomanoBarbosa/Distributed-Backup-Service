@@ -1,0 +1,15 @@
+import java.io.Serializable;
+import java.util.List;
+import java.util.Vector;
+
+public class FileStorage implements Serializable {
+
+    private List<File> storedFiles = new Vector<File>();
+    private List<File> backedUpFiles = new Vector<File>();
+    private String path = null;
+
+    public FileStorage(String p) {
+        path = p;
+    }
+
+}

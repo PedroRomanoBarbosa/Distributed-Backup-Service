@@ -21,7 +21,7 @@ public class FileDeletionProtocol implements Protocol {
                 choice = Integer.parseInt(reader.next());
 
             } catch (NumberFormatException e) {
-                System.out.println("Invalid choice! Please insert a valid number of a file to delete");
+                System.out.print("Invalid choice! Please insert a valid number of a file to delete: ");
             }
         }
 

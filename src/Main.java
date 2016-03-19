@@ -55,7 +55,7 @@ public class Main {
                     case 1:
                         System.out.println("\n---- File Backup ----");
                         //TODO Chamar a funcao/classe aqui
-                        new BackupProtocol();
+                        new BackupProtocol(p);
                         break;
                     case 2:
                         System.out.println("\n---- File Restore ----");

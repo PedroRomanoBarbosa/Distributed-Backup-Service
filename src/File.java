@@ -1,9 +1,11 @@
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.List;
 
 public class File {
     private java.io.File actualFile;
@@ -13,7 +15,8 @@ public class File {
     private int chunksSize;
     private int chunkSize = 64 * 1000;
     private HashMap<Integer, byte[]> chunks = new HashMap<Integer, byte[]>();
-    // private ArrayList<byte[]> chunks = new ArrayList<>();
+    private HashMap<Integer, InetAddress> peersWithChunks = new HashMap<Integer, InetAddress>();
+    //private List<InetAddress> peersWithChunks = new ArrayList<InetAddress>();
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
 

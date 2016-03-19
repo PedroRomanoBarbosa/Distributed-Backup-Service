@@ -94,10 +94,10 @@ public class Peer {
     }
 
     public void start(){
-        restoreThread.start();
+        /*restoreThread.start();
         while (active){
 
-        }
+        }*/
     }
 	
 	public final int getID() {
@@ -114,5 +114,28 @@ public class Peer {
 
     public DataSocket getControlSocket(){
         return controlSocket;
+    }
+
+    public InetAddress getMC_IP() {
+        return MC_IP;
+    }
+
+    public InetAddress getMDB_IP() {
+        return MDB_IP;
+    }
+
+    public InetAddress getMDR_IP() {
+        return MDR_IP;
+    }
+    public int getMC_PORT() {
+        return MC_PORT;
+    }
+
+    public int getMDB_PORT() {
+        return MDB_PORT;
+    }
+
+    public int getMDR_PORT() {
+        return MDR_PORT;
     }
 }

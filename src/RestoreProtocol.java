@@ -6,6 +6,8 @@ public class RestoreProtocol implements Protocol{
 
     public RestoreProtocol(DataSocket cs, DataSocket rs){
         message = "";
+        controlSocket = cs;
+        restoreSocket = rs;
     }
 
     @Override

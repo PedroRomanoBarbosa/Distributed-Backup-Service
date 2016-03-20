@@ -48,7 +48,6 @@ public class Peer {
     }
 
     public void initialize(){
-       System.out.println("ip: " + MC_IP + "  Port: " + MC_PORT);
         try {
             controlSocket = new DataSocket(MC_PORT);
         } catch (IOException e) {
@@ -110,5 +109,13 @@ public class Peer {
 
     public DataSocket getControlSocket(){
         return controlSocket;
+    }
+
+    public InetAddress getRestoreIp(){
+        return MDR_IP;
+    }
+
+    public int getRestorePort(){
+        return MDR_PORT;
     }
 }

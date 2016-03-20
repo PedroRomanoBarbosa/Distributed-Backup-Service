@@ -17,6 +17,7 @@ public class Main {
         Peer p = new Peer(ip,args[1],port1,args[3],port2,args[5],port3);
         p.initialize();
         p.start();
+        System.exit(0);
 
         System.out.println("===== Distributed Backup Service =====");
         Scanner reader = new Scanner(System.in);

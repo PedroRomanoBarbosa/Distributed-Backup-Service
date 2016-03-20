@@ -17,4 +17,12 @@ public class FileStorage implements Serializable {
             backedUpFiles.add(file);
     }
 
+    public List<File> getStoredFiles() {
+        return storedFiles;
+    }
+
+    public List<File> getBackedUpFiles() {
+        return backedUpFiles;
+    }
+
 }

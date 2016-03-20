@@ -38,7 +38,7 @@ public class File {
 
     }
 
-    //FONT: http://www.sha1-online.com/sha256-java/
+    //FONTE: http://www.sha1-online.com/sha256-java/
     private static String sha256(String input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA-256");
         byte[] result = mDigest.digest(input.getBytes());
@@ -51,7 +51,7 @@ public class File {
         return sb.toString();
     }
 
-    //FONT: http://stackoverflow.com/questions/9588348/java-read-file-by-chunks
+    //FONTE: http://stackoverflow.com/questions/9588348/java-read-file-by-chunks
     private void buildChunks(String filePath) throws IOException {
         byte[] buffer = new byte[chunkSize];
         FileInputStream in = new FileInputStream(filePath);
@@ -86,6 +86,11 @@ public class File {
     public String getFileID() {
         return id;
     }
+
+    public String getPathFile() {
+        return pathFile;
+    }
+
 
 
 }

@@ -62,7 +62,7 @@ public class BackupProtocol {
             System.out.println(messageHeader);
             System.out.println(fileToBackup.getChunks().get(i));
 
-            //FONT: http://stackoverflow.com/questions/5368704/appending-a-byte-to-the-end-of-another-byte
+            //FONTE: http://stackoverflow.com/questions/5368704/appending-a-byte-to-the-end-of-another-byte
             System.arraycopy(messageHeader.getBytes(), 0, fullMessage, 0, messageHeader.getBytes().length);
             System.arraycopy(fileToBackup.getChunks().get(i), 0, fullMessage, messageHeader.getBytes().length, fileToBackup.getChunks().get(i).length);
            // System.out.println(fullMessage.toString());
@@ -81,6 +81,8 @@ public class BackupProtocol {
                 }
             }
         }
+
+        System.out.println("File backed up!\n");
     }
 
     public void send(Peer peer, byte[] message){

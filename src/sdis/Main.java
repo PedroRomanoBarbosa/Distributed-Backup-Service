@@ -1,4 +1,6 @@
-import Utils.Regex;
+package sdis;
+
+import sdis.Protocols.*;
 
 import java.io.*;
 import java.util.Scanner;
@@ -96,7 +98,7 @@ public class Main {
                         break;
                     case 3:
                         System.out.println("\n---- File Deletion ----");
-                        new FileDeletionProtocol(p);
+                        new FileDeletionProtocol(p, fileStorage);
                         break;
                     case 4:
                         System.out.println("\n---- Space Reclaiming ----");

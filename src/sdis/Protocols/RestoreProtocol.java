@@ -1,6 +1,7 @@
+package sdis.Protocols;
+import sdis.*;
 
-
-public class RestoreProtocol implements Protocol{
+public class RestoreProtocol {
     String message;
     DataSocket controlSocket, restoreSocket;
 
@@ -8,13 +9,4 @@ public class RestoreProtocol implements Protocol{
         message = "";
     }
 
-    @Override
-    public void send() {
-
-    }
-
-    @Override
-    public void receive() {
-
-    }
 }

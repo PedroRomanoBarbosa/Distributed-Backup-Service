@@ -1,11 +1,11 @@
+package sdis;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
 
 public class File {
     private java.io.File actualFile;

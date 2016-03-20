@@ -1,6 +1,4 @@
-import Utils.Regex;
-
-import java.io.IOException;
+package sdis;
 
 public class MulticastThread extends Thread{
     private String message;

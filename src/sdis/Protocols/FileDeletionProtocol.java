@@ -1,3 +1,6 @@
+package sdis.Protocols;
+
+import sdis.*;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.nio.file.Files;
@@ -13,7 +16,7 @@ public class FileDeletionProtocol {
 
         //Verifica se ja fez backup de algum ficheiro para a rede
         if (fileStorage.getBackedUpFiles().size() == 0) {
-            System.out.println("No backed up files to show");
+            System.out.println("No backed up files to show!");
             return;
         }
 

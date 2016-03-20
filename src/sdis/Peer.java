@@ -94,10 +94,10 @@ public class Peer {
     }
 
     public void start(){
-        /*restoreThread.start();
+        restoreThread.start();
         while (active){
 
-        }*/
+        }
     }
 	
 	public final int getID() {

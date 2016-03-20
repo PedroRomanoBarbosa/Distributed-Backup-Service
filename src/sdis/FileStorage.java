@@ -6,12 +6,14 @@ import java.util.Vector;
 
 public class FileStorage implements Serializable {
 
-    private List<File> storedFiles = new Vector<File>();
-    private List<File> backedUpFiles = new Vector<File>();
+    private List<File> storedFiles = null;
+    private List<File> backedUpFiles = null;
     private String path = null;
 
     public FileStorage(String p) {
         path = p;
+        storedFiles = new Vector<File>();
+        backedUpFiles = new Vector<File>();
     }
 
     public void addBackedUpFile(File file) {

@@ -7,6 +7,8 @@ public class RestoreProtocol {
 
     public RestoreProtocol(DataSocket cs, DataSocket rs){
         message = "";
+        controlSocket = cs;
+        restoreSocket = rs;
     }
 
 }

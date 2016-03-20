@@ -18,6 +18,7 @@ public class Main {
         Peer p = new Peer(Integer.parseInt(args[0]),args[1],Integer.parseInt(args[2]),args[3],Integer.parseInt(args[4]),args[5],Integer.parseInt(args[6]));
         p.initialize();
         p.start();
+        System.exit(0);
 
         System.out.println("===== Distributed Backup Service =====");
         Scanner reader = new Scanner(System.in);

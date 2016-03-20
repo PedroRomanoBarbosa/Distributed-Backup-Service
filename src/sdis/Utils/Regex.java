@@ -32,7 +32,6 @@ public class Regex {
         if (!m.find()){
             return groups;
         }
-        System.out.println(m.groupCount());
         for (int i = 0; i < m.groupCount(); i++){
             groups.add(m.group(i+1));
         }

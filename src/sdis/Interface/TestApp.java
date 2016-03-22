@@ -112,9 +112,10 @@ public class TestApp {
             message += " " + op2;
         }
         try {
-            System.out.println(message);
-            os.writeBytes(message);
-            socket.close();
+            os.write(message.getBytes(),0,message.length());
+            byte[] packet = new byte[100];
+            int n = is.read(packet,0,packet.length);
+            System.out.println(new String(packet).trim());
         } catch (IOException e) {
             e.printStackTrace();
         }

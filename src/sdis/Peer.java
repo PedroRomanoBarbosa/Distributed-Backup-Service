@@ -20,6 +20,8 @@ public class Peer {
     private Socket socket;
     private DataInputStream is;
     private DataOutputStream os;
+    private String clientMessage;
+    private String clientResponse;
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort){
         ID = id;
@@ -116,9 +118,15 @@ public class Peer {
                 socket = serverSocket.accept();
                 is = new DataInputStream(socket.getInputStream());
                 os = new DataOutputStream(socket.getOutputStream());
-                byte[] packet = new byte[64000];
-                int n = is.read(packet);
-                System.out.println(n + "--" + new String(packet));
+                byte[] packet = new byte[100];
+                int n = is.read(packet,0,packet.length);
+                if(n != -1){
+                    clientMessage = new String(packet).trim();
+                    System.out.println(clientMessage);
+                    //TODO process message
+                    clientResponse = "Deu!";
+                    os.write(clientResponse.getBytes(),0,clientResponse.length());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -3,10 +3,12 @@ package sdis;
 import sdis.Protocols.*;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.util.Scanner;
 
 public class Main {
     public static FileStorage fileStorage = null;
+    private static ServerSocket serverSocket;
 
     public static void main(String[] args) {
         if(args.length != 7){

@@ -1,7 +1,11 @@
 package sdis;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Peer {
@@ -12,6 +16,10 @@ public class Peer {
     private DataSocket controlSocket,backupSocket, restoreSocket;
     private MulticastThread multicastControl,multicastDataBackup,multicastDataRestore;
     private RestoreThread restoreThread;
+    private ServerSocket serverSocket;
+    private Socket socket;
+    private DataInputStream is;
+    private DataOutputStream os;
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort){
         ID = id;
@@ -49,6 +57,7 @@ public class Peer {
     }
 
     public void initialize(){
+        //Initialize UDP multicast sockets
         try {
             controlSocket = new DataSocket(MC_PORT);
         } catch (IOException e) {
@@ -91,12 +100,28 @@ public class Peer {
         multicastControl = new MulticastThread(this);
         multicastDataBackup = new MulticastThread(this);
         restoreThread = new RestoreThread(this);
+
+        //Initialize TCP socket
+        try {
+            serverSocket = new ServerSocket(ID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void start(){
         restoreThread.start();
         while (active){
-
+            try {
+                socket = serverSocket.accept();
+                is = new DataInputStream(socket.getInputStream());
+                os = new DataOutputStream(socket.getOutputStream());
+                byte[] packet = new byte[64000];
+                int n = is.read(packet);
+                System.out.println(n + "--" + new String(packet));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 	

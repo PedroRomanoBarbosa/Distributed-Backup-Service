@@ -1,5 +1,6 @@
 package sdis;
 
+import sdis.Protocols.BackupProtocol;
 import sdis.Utils.Regex;
 
 import java.io.*;
@@ -158,6 +159,7 @@ public class Peer {
                                 System.out.println("backup");
                                 filename = groups.get(1);
                                 degree = Integer.parseInt(groups.get(3));
+                                new BackupProtocol(this, fileStorage, filename, degree);
                                 break;
                             case "RESTORE":
                                 filename = groups.get(1);

@@ -13,38 +13,20 @@ public class BackupProtocol {
     private int maxReplicationDegree = 9;
     private int maxTriesPerChunk = 5;
 
-    public BackupProtocol(Peer peer, FileStorage fileStorage) {
-        //Verificar a validade do path/ficheiro
-        String filePath;
+    public BackupProtocol(Peer peer, FileStorage fileStorage, String filename, int degree) {
 
-        while (true) {
-            System.out.print("Path to file to backup: ");
-            filePath = reader.next();
-            //filePath = "C:\\Users\\User\\Desktop\\SDIS.txt";
+        final String filePath = System.getProperty("user.dir") + java.io.File.separator + filename;
 
-            try {
-                if (Files.isDirectory(Paths.get(filePath)) || !Files.exists(Paths.get(filePath)))
+        try {
+        if (Files.isDirectory(Paths.get(filePath)) || !Files.exists(Paths.get(filePath)))
                     throw new IOException();
 
-                break;
-            } catch(IOException e){
+        } catch(IOException e){
                 System.out.println("Error: Not a valid path for a file!");
-                continue;
-            }
         }
 
         //Grau de replicacao
-        System.out.print("Replication Degree (1-9): ");
-        int replicationDegree = 0;
-        while(replicationDegree < 1 || replicationDegree > maxReplicationDegree)  {
-            try {
-                replicationDegree = reader.nextInt();
-                break;
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid choice! Please insert a number between 1 and 9: ");
-            }
-        }
+        int replicationDegree = degree;
 
         File fileToBackup = null;
         try {

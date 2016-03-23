@@ -45,45 +45,53 @@ public class BackupProtocol {
 
             byte[] fullMessage = new byte[messageHeader.getBytes().length + fileToBackup.getChunks().get(i).length];
             System.out.println(messageHeader);
-            System.out.println(fileToBackup.getChunks().get(i));
+            System.out.println(new String(fileToBackup.getChunks().get(i)));
 
             //FONTE: http://stackoverflow.com/questions/5368704/appending-a-byte-to-the-end-of-another-byte
             System.arraycopy(messageHeader.getBytes(), 0, fullMessage, 0, messageHeader.getBytes().length);
             System.arraycopy(fileToBackup.getChunks().get(i), 0, fullMessage, messageHeader.getBytes().length, fileToBackup.getChunks().get(i).length);
            // System.out.println(fullMessage.toString());
-
-            //for (int tries = 0; fileToBackup.getPeerCount() < replicationDegree && tries < maxTriesPerChunk; tries++) {
-            for (int tries = 0; tries < maxTriesPerChunk; tries++) {
-                try {
-                    send(peer, fullMessage);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    Thread.sleep((long) (Math.random() * 400));
-                } catch (InterruptedException e) {
-                }
-            }
+            new SendThread(peer, fullMessage).run();
         }
 
         System.out.println("File backed up!\n");
     }
 
-    public void send(Peer peer, byte[] message){
+    public class SendThread extends Thread {
 
-        DatagramPacket packet = new DatagramPacket(message, message.length, peer.getMDB_IP(), peer.getMDB_PORT());
+        Peer peer;
+        byte[] fullMessage;
 
-        try {
-            peer.getBackupSocket().send(packet);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        public SendThread(Peer p, byte[] fullMessag){
+            peer = p;
+            fullMessage = fullMessag;
         }
 
-    }
+        public void run() {
+            int sleepTime = 1;
+            for (int tries = 0; tries < maxTriesPerChunk; tries++) {
+System.out.println("STUFF");
+                //Envio da mensagem
+                try {
+                    DatagramPacket packet = new DatagramPacket(fullMessage, fullMessage.length, peer.getMDB_IP(), peer.getMDB_PORT());
 
-    public void receive(){
+                    try {
+                        peer.getBackupSocket().send(packet);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    Thread.sleep((long) (sleepTime));
+                    sleepTime = 2*sleepTime;
+                } catch (InterruptedException e) {
+                }
+            }
+        }
 
     }
 }

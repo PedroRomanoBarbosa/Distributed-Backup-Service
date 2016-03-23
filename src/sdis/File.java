@@ -2,10 +2,13 @@ package sdis;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 public class File {
     private java.io.File actualFile;
@@ -19,6 +22,12 @@ public class File {
     //private List<InetAddress> peersWithChunks = new ArrayList<InetAddress>();
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
+
+        ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
+       // nome.get(0).size();
+
+        //USAR
+        Vector<Vector<InetAddress>> vec = new Vector<Vector<InetAddress>>();
 
         pathFile = filePath;
         replicationDegree = repDegree;

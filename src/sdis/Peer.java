@@ -133,7 +133,7 @@ public class Peer {
         }
 
         //Start multicast channels threads
-        restoreThread.start();
+       // restoreThread.start();
 
         //Main loop for serving the client interface
         while (active){

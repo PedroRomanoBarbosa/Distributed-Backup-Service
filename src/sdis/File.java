@@ -18,16 +18,13 @@ public class File {
     private int chunksSize;
     private int chunkSize = 64 * 1000;
     private HashMap<Integer, byte[]> chunks = new HashMap<Integer, byte[]>();
-    private HashMap<Integer, InetAddress> peersWithChunks = new HashMap<Integer, InetAddress>();
-    //private List<InetAddress> peersWithChunks = new ArrayList<InetAddress>();
+    Vector<Vector<InetAddress>> peersWithChunk = new Vector<Vector<InetAddress>>();
+
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
 
-        ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
+        //ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
        // nome.get(0).size();
-
-        //USAR
-        Vector<Vector<InetAddress>> vec = new Vector<Vector<InetAddress>>();
 
         pathFile = filePath;
         replicationDegree = repDegree;
@@ -70,10 +67,22 @@ public class File {
         while (bytesRead != -1) {
 
             chunks.put(chunks.size(), buffer);
+
+            //Cria vetor para graus de replicacao
+            peersWithChunk.add(new Vector<>());
+
            // chunks.put(chunksSize, buffer);
             bytesRead = in.read(buffer);
 
         }
+    }
+
+    public void addChunkReplication(int chuckNumb, InetAddress address) {
+        peersWithChunk.get(chuckNumb).add(address);
+    }
+
+    public void getChunkReplication(int chuckNumb) {
+        peersWithChunk.get(chuckNumb).size();
     }
 
     public HashMap<Integer, byte[]> getChunks(){

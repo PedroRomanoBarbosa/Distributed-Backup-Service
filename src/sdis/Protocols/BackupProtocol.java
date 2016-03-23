@@ -70,7 +70,7 @@ public class BackupProtocol {
         public void run() {
             int sleepTime = 1;
             for (int tries = 0; tries < maxTriesPerChunk; tries++) {
-System.out.println("STUFF");
+
                 //Envio da mensagem
                 try {
                     DatagramPacket packet = new DatagramPacket(fullMessage, fullMessage.length, peer.getMDB_IP(), peer.getMDB_PORT());

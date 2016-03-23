@@ -13,6 +13,11 @@ public class Regex {
         m = null;
     }
 
+    public Regex(){
+        p = Pattern.compile(".*");
+        m = null;
+    }
+
     public String getPattern(){
         return p.pattern();
     }

@@ -1,27 +1,28 @@
 package sdis;
 
+import sdis.Utils.Regex;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class Peer {
     private final int ID;
-    private boolean active;
     private final InetAddress MC_IP, MDB_IP, MDR_IP;
     private final int MC_PORT, MDB_PORT, MDR_PORT;
+    private final String clientPattern = "^(BACKUP|RESTORE|DELETE|RECLAIM)\\s(.+?)(\\s([0-9]))?$";
+
+    private boolean active;
     private DataSocket controlSocket,backupSocket, restoreSocket;
     private MulticastThread multicastControl,multicastDataBackup,multicastDataRestore;
     private RestoreThread restoreThread;
     private ServerSocket serverSocket;
-    private Socket socket;
-    private DataInputStream is;
-    private DataOutputStream os;
-    private String clientMessage;
-    private String clientResponse;
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort){
         ID = id;
@@ -112,21 +113,57 @@ public class Peer {
     }
 
     public void start(){
+        //Start multicast channels threads
         restoreThread.start();
+
+        //Main loop for serving the client interface
         while (active){
             try {
-                socket = serverSocket.accept();
-                is = new DataInputStream(socket.getInputStream());
-                os = new DataOutputStream(socket.getOutputStream());
-                byte[] packet = new byte[100];
-                int n = is.read(packet,0,packet.length);
+                //Receive
+                Socket socket = serverSocket.accept();
+                DataInputStream is = new DataInputStream(socket.getInputStream());
+                DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+                byte[] packet = new byte[512];
+                int n = is.read(packet);
                 if(n != -1){
-                    clientMessage = new String(packet).trim();
-                    System.out.println(clientMessage);
-                    //TODO process message
-                    clientResponse = "Deu!";
-                    os.write(clientResponse.getBytes(),0,clientResponse.length());
+                    Regex regex = new Regex();
+                    regex.setPattern(clientPattern);
+                    String clientMessage = new String(packet).trim();
+                    ArrayList<String> groups = regex.getGroups(clientMessage);
+                    if(!groups.isEmpty()){
+                        String protocol = groups.get(0);
+                        String filename = "";
+                        int degree;
+                        //TODO: Decide which parameter is used in each of the protocols and call the functions
+                        switch (protocol){
+                            case "BACKUP":
+                                System.out.println("backup");
+                                filename = groups.get(1);
+                                degree = Integer.parseInt(groups.get(3));
+                                break;
+                            case "RESTORE":
+                                filename = groups.get(1);
+                                break;
+                            case "DELETE":
+                                filename = groups.get(1);
+                                break;
+                            case "RECLAIM":
+                                break;
+                        }
+                    }else {
+                        System.err.println("Invalid client message");
+                    }
+                }else {
+                    System.err.println("Could not read client's message correctly");
                 }
+
+                //Send back
+                String clientResponse = "Deu!";
+                os.write(clientResponse.getBytes(),0,clientResponse.length());
+                is.close();
+                os.close();
+                socket.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

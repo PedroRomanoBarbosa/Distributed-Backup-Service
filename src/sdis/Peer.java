@@ -2,9 +2,7 @@ package sdis;
 
 import sdis.Utils.Regex;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -23,8 +21,11 @@ public class Peer {
     private MulticastThread multicastControl,multicastDataBackup,multicastDataRestore;
     private RestoreThread restoreThread;
     private ServerSocket serverSocket;
+    private FileStorage fileStorage;
 
-    public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort){
+    public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort, FileStorage fileStor){
+        fileStorage = fileStor;
+
         ID = id;
         InetAddress mc_ip=null;
         try {
@@ -113,6 +114,23 @@ public class Peer {
     }
 
     public void start(){
+        //FONTE: http://stackoverflow.com/questions/3153337/get-current-working-directory-in-java
+        final String path = System.getProperty("user.dir");
+
+        //Load
+        try {
+            FileInputStream fis = new FileInputStream(path + java.io.File.separator + ".info");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            fileStorage = (FileStorage) ois.readObject();
+
+            ois.close();
+            fis.close();
+
+        } catch (Exception e) {
+            fileStorage = new FileStorage(path);
+        }
+
         //Start multicast channels threads
         restoreThread.start();
 
@@ -167,6 +185,21 @@ public class Peer {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+
+        //Save
+        try {
+            FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + ".info");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(fileStorage);
+
+            oos.close();
+            fos.close();
+
+        } catch (Exception e) {
+
         }
     }
 	

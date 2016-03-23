@@ -2,7 +2,6 @@ package sdis.Interface;
 
 import sdis.Utils.Regex;
 
-import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,9 +11,9 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class TestApp {
+    private static final String pattern = "^(([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}):)?([0-9]+)$";
+
     private static boolean local;
-    private static String message;
-    private static Regex regex;
     private static InetAddress serverIp;
     private static int serverPort;
     private static String protocol,op1,op2;
@@ -39,13 +38,14 @@ public class TestApp {
 
     private static void getArguments(String[] args){
         // Get peer ip and port
-        regex = new Regex("^(([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}):)?([0-9]+)$");
+        Regex regex = new Regex(pattern);
         ArrayList<String> groups = regex.getGroups(args[0]);
         System.out.println(groups);
         if(groups.isEmpty()){
             System.err.println("Invalid Ip and port address representation");
             System.exit(1);
         }else if(groups.get(1) == null){
+            local = true;
             try {
                 serverIp = InetAddress.getLocalHost();
             } catch (UnknownHostException e) {
@@ -66,7 +66,7 @@ public class TestApp {
         if(args[1].equals("BACKUP") | args[1].equals("RESTORE") | args[1].equals("DELETE") | args[1].equals("RECLAIM")){
             protocol = args[1];
         }else {
-            System.err.println("Invalid arguments for the protocol. Try:\n"  +
+            System.err.println("Invalid protocol. Try:\n"  +
                     "RESTORE\n" +
                     "BACKUP\n" +
                     "DELETE\n" +
@@ -107,20 +107,22 @@ public class TestApp {
     }
 
     private static void sendMessage(){
-        message = protocol + " " + op1;
+        String message = protocol + " " + op1;
         if(protocol.equals("BACKUP")){
             message += " " + op2;
         }
         try {
             os.write(message.getBytes(),0,message.length());
+            socket.shutdownOutput();
             byte[] packet = new byte[100];
             int n = is.read(packet,0,packet.length);
             System.out.println(new String(packet).trim());
+            os.close();
+            is.close();
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private static String usage(){

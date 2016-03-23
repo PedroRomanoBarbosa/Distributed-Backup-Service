@@ -57,7 +57,11 @@ public class BackupProtocol {
         System.out.println("File backed up!\n");
     }
 
-    public class SendThread extends Thread {
+
+    /*
+    SUBCLASSE para a thread de envio dos chunks
+     */
+    public class SendThread implements Runnable {
 
         Peer peer;
         byte[] fullMessage;
@@ -91,6 +95,7 @@ public class BackupProtocol {
                 } catch (InterruptedException e) {
                 }
             }
+
         }
 
     }

@@ -22,7 +22,7 @@ public class MC implements Runnable {
         while (true) {
 
             try {
-                DatagramPacket packet = peer.getControlSocket().receive();
+                DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
                 String message = new String(packet.getData(), 0, packet.getLength());
 
                 try {
@@ -56,7 +56,5 @@ public class MC implements Runnable {
             default:
                 break;
         }
-        }
-
     }
 }

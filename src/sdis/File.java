@@ -82,7 +82,7 @@ public class File {
     }
 
     public int getChunkReplication(int chuckNumb) {
-        peersWithChunk.get(chuckNumb).size();
+        return peersWithChunk.get(chuckNumb).size();
     }
 
     public HashMap<Integer, byte[]> getChunks(){

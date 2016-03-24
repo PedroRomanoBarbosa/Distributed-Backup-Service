@@ -45,7 +45,7 @@ public class TestApp {
         }else if(groups.get(1) == null){
             local = true;
             try {
-                serverIp = InetAddress.getLocalHost();
+                serverIp = InetAddress.getByName("127.0.0.1");
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }

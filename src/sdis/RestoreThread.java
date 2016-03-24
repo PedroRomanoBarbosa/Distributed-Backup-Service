@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.io.File;
 
+/**
+ * Restore thread handles the MDR channel for a peer
+ */
 public class RestoreThread extends MulticastThread{
     private String message;
     private Regex regex;
@@ -35,7 +38,7 @@ public class RestoreThread extends MulticastThread{
      */
     public void run() {
         //Recieve CHUNK messages from the MDR and create file
-        int numChunks = 3;//peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+        int numChunks = 3; //peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
         String[] chunks = new String[numChunks];
         int i = 0;
         while (i < numChunks){
@@ -47,7 +50,7 @@ public class RestoreThread extends MulticastThread{
                 //Check if its a valid message and its from version 1.0
                 if(groups.get(0).equals("CHUNK") && groups.get(1).equals("1.0")){
                     fileId = groups.get(3);
-                    int chunkNumber = Integer.parseInt(groups.get(4));
+                    int chunkNumber = i;
                     if(chunks[chunkNumber] == null){
                         chunks[chunkNumber] = groups.get(5);
                         i++;
@@ -55,14 +58,16 @@ public class RestoreThread extends MulticastThread{
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                peer.sendToClient("File couldn't be restored");
             }
         }
+
         try {
-            sleep(2000);
+            sleep(1000);
+            peer.sendToClient("File is fully restored");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Deprecated

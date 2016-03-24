@@ -35,7 +35,6 @@ public class Peer {
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort, FileStorage fileStor){
         fileStorage = fileStor;
-
         ID = id;
         InetAddress mc_ip=null;
         try {
@@ -112,7 +111,7 @@ public class Peer {
         }
 
         multicastControl = new MC(this, fileStorage);
-        multicastControl.run();
+        //multicastControl.run();
         //Initialize TCP socket
         try {
             serverSocket = new ServerSocket(ID);
@@ -124,7 +123,6 @@ public class Peer {
     public void start(){
         //FONTE: http://stackoverflow.com/questions/3153337/get-current-working-directory-in-java
         final String path = System.getProperty("user.dir");
-
         //Load
         try {
             FileInputStream fis = new FileInputStream(path + java.io.File.separator + ".info");

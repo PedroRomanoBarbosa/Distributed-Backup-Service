@@ -21,6 +21,15 @@ public class FileStorage implements Serializable {
             backedUpFiles.add(file);
     }
 
+    public boolean checkBackedUp(String filePath){
+        for (File file : backedUpFiles){
+            if(file.getPathFile().equals(filePath)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<File> getStoredFiles() {
         return storedFiles;
     }

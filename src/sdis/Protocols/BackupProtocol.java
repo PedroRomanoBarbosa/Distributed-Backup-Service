@@ -51,7 +51,7 @@ public class BackupProtocol {
             System.arraycopy(messageHeader.getBytes(), 0, fullMessage, 0, messageHeader.getBytes().length);
             System.arraycopy(fileToBackup.getChunks().get(i), 0, fullMessage, messageHeader.getBytes().length, fileToBackup.getChunks().get(i).length);
            // System.out.println(fullMessage.toString());
-            new SendThread(peer, fullMessage).run();
+            new SendThread(peer, fullMessage, replicationDegree, fileToBackup, i).run();
         }
 
         System.out.println("File backed up!\n");
@@ -63,18 +63,23 @@ public class BackupProtocol {
      */
     public class SendThread implements Runnable {
 
-        Peer peer;
-        byte[] fullMessage;
+        private Peer peer;
+        private byte[] fullMessage;
+        private int replicationDegree;
+        private File file;
+        private int chunkNo;
 
-        public SendThread(Peer p, byte[] fullMessag){
+        public SendThread(Peer p, byte[] fullMessag, int replicationDg, File f, int chunkN){
             peer = p;
             fullMessage = fullMessag;
+            replicationDegree = replicationDg;
+            file = f;
+            chunkNo = chunkN;
         }
 
         public void run() {
             int sleepTime = 1;
-            for (int tries = 0; tries < maxTriesPerChunk; tries++) {
-
+            for (int tries = 0; file.getChunkReplication(chunkNo) < replicationDegree && tries < maxTriesPerChunk; tries++) {
                 //Envio da mensagem
                 try {
                     DatagramPacket packet = new DatagramPacket(fullMessage, fullMessage.length, peer.getMDB_IP(), peer.getMDB_PORT());

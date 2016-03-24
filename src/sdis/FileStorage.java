@@ -29,4 +29,11 @@ public class FileStorage implements Serializable {
         return backedUpFiles;
     }
 
+    public File getBackedUpFilesById(String Id) {
+        for (File f : backedUpFiles)
+            if (f.getFileID().equals(Id))
+                return f;
+        return null;
+    }
+
 }

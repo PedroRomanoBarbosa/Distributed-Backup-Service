@@ -1,5 +1,6 @@
 package sdis;
 
+import sdis.MulticastChannels.MC;
 import sdis.Protocols.BackupProtocol;
 import sdis.Utils.Regex;
 
@@ -19,7 +20,8 @@ public class Peer {
 
     private boolean active;
     private DataSocket controlSocket,backupSocket, restoreSocket;
-    private MulticastThread multicastControl,multicastDataBackup,multicastDataRestore;
+    private MulticastThread multicastDataBackup,multicastDataRestore;
+    private MC multicastControl;
     private RestoreThread restoreThread;
     private ServerSocket serverSocket;
     private FileStorage fileStorage;
@@ -102,7 +104,9 @@ public class Peer {
             System.err.println("Error joining multicast data restore channel group");
         }
 
-        multicastControl = new MulticastThread(this);
+        multicastControl = new MC(this, fileStorage);
+        multicastControl.run();
+
         multicastDataBackup = new MulticastThread(this);
         restoreThread = new RestoreThread(this);
 

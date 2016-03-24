@@ -81,7 +81,7 @@ public class File {
         peersWithChunk.get(chuckNumb).add(address);
     }
 
-    public void getChunkReplication(int chuckNumb) {
+    public int getChunkReplication(int chuckNumb) {
         peersWithChunk.get(chuckNumb).size();
     }
 

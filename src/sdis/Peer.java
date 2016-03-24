@@ -5,7 +5,7 @@ import sdis.Protocols.RestoreProtocol;
 import sdis.Utils.Regex;
 
 import java.io.*;
-import java.lang.reflect.Array;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,10 +13,16 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class Peer {
+    //Constants
     private final int ID;
     private final InetAddress MC_IP, MDB_IP, MDR_IP;
     private final int MC_PORT, MDB_PORT, MDR_PORT;
     private final String clientPattern = "^(BACKUP|RESTORE|DELETE|RECLAIM)\\s(.+?)(\\s([0-9]))?$";
+
+    //TCP client connection
+    Socket socket;
+    DataInputStream is;
+    DataOutputStream os;
 
     private boolean active;
     private DataSocket controlSocket,backupSocket, restoreSocket;
@@ -103,10 +109,6 @@ public class Peer {
             System.err.println("Error joining multicast data restore channel group");
         }
 
-        multicastControl = new MulticastThread(this);
-        multicastDataBackup = new MulticastThread(this);
-        restoreThread = new RestoreThread(this);
-
         //Initialize TCP socket
         try {
             serverSocket = new ServerSocket(ID);
@@ -133,16 +135,13 @@ public class Peer {
             fileStorage = new FileStorage(path);
         }
 
-        //Start multicast channels threads
-       // restoreThread.start();
-
         //Main loop for serving the client interface
         while (active){
             try {
                 //Receive
-                Socket socket = serverSocket.accept();
-                DataInputStream is = new DataInputStream(socket.getInputStream());
-                DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+                socket = serverSocket.accept();
+                is = new DataInputStream(socket.getInputStream());
+                os = new DataOutputStream(socket.getOutputStream());
                 byte[] packet = new byte[512];
                 int n = is.read(packet);
                 if(n != -1){
@@ -162,8 +161,13 @@ public class Peer {
                                 new BackupProtocol(this, fileStorage, filename, degree);
                                 break;
                             case "RESTORE":
-                                //TODO
+                                //Create file path
                                 filename = groups.get(1);
+                                String cwd = System.getProperty("user.dir");
+                                String filePath = cwd + File.separator + filename;
+                                restoreThread = new RestoreThread(this,"restore",filePath);
+                                RestoreProtocol rp = new RestoreProtocol(this);
+                                rp.getChunk(filePath);
                                 break;
                             case "DELETE":
                                 //TODO
@@ -174,24 +178,20 @@ public class Peer {
                                 break;
                         }
                     }else {
-                        System.err.println("Invalid client message");
+                        sendToClient("Invalid Message");
                     }
                 }else {
-                    System.err.println("Could not read client's message correctly");
+                    sendToClient("Invalid Message");
                 }
 
-                //Send back
-                String clientResponse = "Deu!";
-                os.write(clientResponse.getBytes(),0,clientResponse.length());
+                //Close socket and streams
                 is.close();
                 os.close();
                 socket.close();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
 
         //Save
         try {
@@ -246,5 +246,22 @@ public class Peer {
 
     public int getMDR_PORT() {
         return MDR_PORT;
+    }
+
+    public FileStorage getFileStorage(){
+        return fileStorage;
+    }
+
+    public RestoreThread getRestoreThread(){
+        return restoreThread;
+    }
+
+    public void sendToClient(String message){
+        message = "[SERVER] " + message;
+        try {
+            os.write(message.getBytes(),0,message.length());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

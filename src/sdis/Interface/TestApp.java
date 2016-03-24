@@ -32,8 +32,7 @@ public class TestApp {
 
         initalize();
 
-        sendMessage();
-
+        communicate();
     }
 
     private static void getArguments(String[] args){
@@ -89,6 +88,7 @@ public class TestApp {
                 op2 = args[3];
             }else {
                 System.err.println(usage());
+                System.exit(1);
             }
         }
     }
@@ -105,19 +105,21 @@ public class TestApp {
         }
     }
 
-    private static void sendMessage(){
+    private static void communicate(){
         String message = protocol + " " + op1;
         if(protocol.equals("BACKUP")){
             message += " " + op2;
         }
         try {
+            //Write message
             os.write(message.getBytes(),0,message.length());
-            socket.shutdownOutput();
+
+            //Read message
             byte[] packet = new byte[100];
-            int n = is.read(packet,0,packet.length);
+            is.read(packet,0,packet.length);
             System.out.println(new String(packet).trim());
-            os.close();
             is.close();
+            os.close();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

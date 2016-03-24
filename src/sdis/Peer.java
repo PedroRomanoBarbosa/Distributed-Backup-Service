@@ -1,6 +1,7 @@
 package sdis;
 
 import sdis.Protocols.BackupProtocol;
+import sdis.Protocols.RestoreProtocol;
 import sdis.Utils.Regex;
 
 import java.io.*;
@@ -156,18 +157,20 @@ public class Peer {
                         //TODO: Decide which parameter is used in each of the protocols and call the functions
                         switch (protocol){
                             case "BACKUP":
-                                System.out.println("backup");
                                 filename = groups.get(1);
                                 degree = Integer.parseInt(groups.get(3));
                                 new BackupProtocol(this, fileStorage, filename, degree);
                                 break;
                             case "RESTORE":
+                                //TODO
                                 filename = groups.get(1);
                                 break;
                             case "DELETE":
+                                //TODO
                                 filename = groups.get(1);
                                 break;
                             case "RECLAIM":
+                                //TODO
                                 break;
                         }
                     }else {

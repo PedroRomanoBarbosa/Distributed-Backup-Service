@@ -40,7 +40,6 @@ public class TestApp {
         // Get peer ip and port
         Regex regex = new Regex(pattern);
         ArrayList<String> groups = regex.getGroups(args[0]);
-        System.out.println(groups);
         if(groups.isEmpty()){
             System.err.println("Invalid Ip and port address representation");
             System.exit(1);

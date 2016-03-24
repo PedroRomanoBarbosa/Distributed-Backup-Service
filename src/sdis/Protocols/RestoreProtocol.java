@@ -1,14 +1,19 @@
 package sdis.Protocols;
 import sdis.*;
+import sdis.Utils.Regex;
 
 public class RestoreProtocol {
-    String message;
-    DataSocket controlSocket, restoreSocket;
+    private String message;
+    private Regex regex;
+    private Peer peer;
 
-    public RestoreProtocol(DataSocket cs, DataSocket rs){
-        message = "";
-        controlSocket = cs;
-        restoreSocket = rs;
+    public RestoreProtocol(Peer p){
+        peer = p;
+        regex = new Regex("^(CHUNK)\\s+([0-9]\\.[0-9])\\s+([0-9]+)\\s+(.+)\\s+([0-9]+)\\s+\r\n\r\n$");
+    }
+
+    public void getChunk(){
+
     }
 
 }

@@ -19,14 +19,16 @@ public class File {
     private int replicationDegree;
     private int chunksSize;
     private int chunkSize = 64 * 1000;
-    private HashMap<Integer, byte[]> chunks = new HashMap<Integer, byte[]>();
-    Vector<Vector<InetAddress>> peersWithChunk = new Vector<Vector<InetAddress>>();
+    private HashMap<Integer, byte[]> chunks;
+    Vector<Vector<InetAddress>> peersWithChunk;
 
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
 
         //ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
        // nome.get(0).size();
+        chunks = new HashMap<Integer, byte[]>();
+        peersWithChunk = new Vector<Vector<InetAddress>>();
 
         pathFile = filePath;
         replicationDegree = repDegree;
@@ -45,6 +47,13 @@ public class File {
             e.printStackTrace();
         }
 
+    }
+
+    //Uusado para os ficheiros stored
+    public File(String ident, int repDegree, int notUsed) {
+        chunks = new HashMap<Integer, byte[]>();
+        replicationDegree = repDegree;
+        id = ident;
     }
 
     //FONTE: http://www.sha1-online.com/sha256-java/
@@ -112,13 +121,13 @@ public class File {
         return pathFile;
     }
 
-    
+
     public void storeChunk(int chunkId) {
         try {
             String path = System.getProperty("user.dir") + java.io.File.separator + id;
             new java.io.File(path).mkdirs();
 
-            FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + fileName + chunkId);
+            FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + chunkId);
             fos.write(chunks.get(chunkId));
             fos.close();
 

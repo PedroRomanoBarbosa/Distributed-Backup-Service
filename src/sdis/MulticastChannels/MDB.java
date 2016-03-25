@@ -5,6 +5,7 @@ import sdis.Peer;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.security.NoSuchAlgorithmException;
 
 public class MDB implements Runnable {
 
@@ -46,6 +47,41 @@ public class MDB implements Runnable {
 
                 if (file != null)
                     return;
+
+                file = fileStorage.getStoredFilesById(message[3]);
+
+                //Se ainda nao tiver recebido nenhum chunk do ficheiro
+                if (file == null) {
+                    file = new sdis.File(message[4], Integer.parseInt(message[5]), 0);
+
+                    file.getChunks().put(Integer.parseInt(message[4]), message[8].getBytes());
+                    file.storeChunk(Integer.parseInt(message[4]));
+                    fileStorage.addStoredFile(file);
+                }
+
+                //Se ja tiver recebido algum chunk do ficheiro apenas adiciona o chunk
+                else {
+                    file.getChunks().put(Integer.parseInt(message[4]), message[8].getBytes());
+                    file.storeChunk(Integer.parseInt(message[4]));
+                }
+
+
+                //Cria resposta
+                String responseHeader = "STORED " + "1.0" + " " + peer.getID() + " " + message[3] + " " + message[4] + " " + "\r\n\r\n";
+
+                //Faz o sleep
+                try {
+                    Thread.sleep((long) (Math.random() * 400));
+                } catch (InterruptedException e) {
+                }
+
+                //Tenta enviar
+                try {
+                    peer.getBackupSocket().send(responseHeader, peer.getMC_IP(), peer.getMC_PORT());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             default:

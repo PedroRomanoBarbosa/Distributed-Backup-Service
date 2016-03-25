@@ -21,6 +21,11 @@ public class FileStorage implements Serializable {
             backedUpFiles.add(file);
     }
 
+    public void addStoredFile(File file) {
+        if (!storedFiles.contains(file))
+            storedFiles.add(file);
+    }
+
     public boolean checkBackedUp(String filePath){
         for (File file : backedUpFiles){
             if(file.getPathFile().equals(filePath)){
@@ -40,6 +45,13 @@ public class FileStorage implements Serializable {
 
     public File getBackedUpFilesById(String Id) {
         for (File f : backedUpFiles)
+            if (f.getFileID().equals(Id))
+                return f;
+        return null;
+    }
+
+    public File getStoredFilesById(String Id) {
+        for (File f : storedFiles)
             if (f.getFileID().equals(Id))
                 return f;
         return null;

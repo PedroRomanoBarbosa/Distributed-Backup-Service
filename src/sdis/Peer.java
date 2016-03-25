@@ -112,20 +112,6 @@ public class Peer {
             System.err.println("Error joining multicast data restore channel group");
         }
 
-        multicastControl = new MC(this, fileStorage);
-        //multicastControl.run();
-        multicastDataBackup = new MDB(this, fileStorage);
-        restoreThread = new RestoreThread(this,"restore");
-
-        //Initialize TCP socket
-        try {
-            serverSocket = new ServerSocket(ID);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void start(){
         //FONTE: http://stackoverflow.com/questions/3153337/get-current-working-directory-in-java
         final String path = System.getProperty("user.dir");
         //Load
@@ -142,7 +128,22 @@ public class Peer {
             fileStorage = new FileStorage(path);
         }
 
+        multicastControl = new MC(this, fileStorage);
+        multicastDataBackup = new MDB(this, fileStorage);
+        restoreThread = new RestoreThread(this,"restore");
+
+        //Initialize TCP socket
+        try {
+            serverSocket = new ServerSocket(ID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void start(){
         restoreThread.start();
+        multicastControl.start();
+        multicastDataBackup.start();
 
         //Main loop for serving the client interface
         while (active){
@@ -198,7 +199,7 @@ public class Peer {
 
         //Save
         try {
-            FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + ".info");
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + java.io.File.separator + ".info");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
             oos.writeObject(fileStorage);

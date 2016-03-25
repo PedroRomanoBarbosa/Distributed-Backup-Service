@@ -7,7 +7,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class MC implements Runnable {
+public class MC extends Thread {
 
     private Peer peer;
     private FileStorage fileStorage;

@@ -7,7 +7,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 
-public class MDB implements Runnable {
+public class MDB extends Thread {
 
     private Peer peer;
     private FileStorage fileStorage;
@@ -22,7 +22,7 @@ public class MDB implements Runnable {
         while (true) {
 
             try {
-                DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
+                DatagramPacket packet = peer.getBackupSocket().receivePacket(64000);
                 String message = new String(packet.getData(), 0, packet.getLength());
 
                 try {

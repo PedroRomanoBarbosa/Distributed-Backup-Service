@@ -44,7 +44,7 @@ public class BackupProtocol {
                fileToBackup.getReplicationDegree() + " " + "\r\n\r\n";
 
             String fullMessage = messageHeader + new String (fileToBackup.getChunks().get(i));
-            
+
             new SendThread(peer, fullMessage, replicationDegree, fileToBackup, i).run();
         }
 

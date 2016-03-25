@@ -1,6 +1,7 @@
 package sdis;
 
 import sdis.MulticastChannels.MC;
+import sdis.MulticastChannels.MDB;
 import sdis.Protocols.BackupProtocol;
 import sdis.Protocols.RestoreProtocol;
 import sdis.Utils.Regex;
@@ -27,8 +28,9 @@ public class Peer {
 
     private boolean active;
     private DataSocket controlSocket,backupSocket, restoreSocket;
-    private MulticastThread multicastDataBackup,multicastDataRestore;
+    private MulticastThread multicastDataRestore;
     private MC multicastControl;
+    private MDB multicastDataBackup;
     private RestoreThread restoreThread;
     private ServerSocket serverSocket;
     private FileStorage fileStorage;
@@ -112,6 +114,8 @@ public class Peer {
 
         multicastControl = new MC(this, fileStorage);
         //multicastControl.run();
+        multicastDataBackup = new MDB(this, fileStorage);
+
         //Initialize TCP socket
         try {
             serverSocket = new ServerSocket(ID);

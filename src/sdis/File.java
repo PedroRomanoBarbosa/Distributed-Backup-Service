@@ -1,6 +1,7 @@
 package sdis;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -14,6 +15,7 @@ public class File {
     private java.io.File actualFile;
     private String id;
     private String pathFile;
+    private String fileName;
     private int replicationDegree;
     private int chunksSize;
     private int chunkSize = 64 * 1000;
@@ -33,7 +35,8 @@ public class File {
 
         //CRIAR O CAMPO ID COM SHA256
         actualFile = new java.io.File(pathFile);
-        String idAux = pathFile + actualFile.getName() + Long.toString(actualFile.lastModified());
+        fileName = actualFile.getName();
+        String idAux = pathFile + fileName + Long.toString(actualFile.lastModified());
         id = sha256(idAux);
 
         try {
@@ -109,6 +112,20 @@ public class File {
         return pathFile;
     }
 
+    
+    public void storeChunk(int chunkId) {
+        try {
+            String path = System.getProperty("user.dir") + java.io.File.separator + id;
+            new java.io.File(path).mkdirs();
 
+            FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + fileName + chunkId);
+            fos.write(chunks.get(chunkId));
+            fos.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }

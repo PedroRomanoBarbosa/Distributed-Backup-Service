@@ -12,21 +12,28 @@ import java.io.File;
  * Restore thread handles the MDR channel for a peer
  */
 public class RestoreThread extends MulticastThread{
-    private String message;
     private Regex regex;
     private String fileId;
+    private volatile boolean restore;
 
     /**
      * Creates a new thread to collect chunks from the network to
      * restore the intended file
      * @param p Peer object
      * @param name Thread name
-     * @param fid File's id to restore
      */
-    public RestoreThread(Peer p, String name, String fid){
+    public RestoreThread(Peer p, String name){
         super(p,name);
-        fileId = fid;
         regex = new Regex("^(CHUNK)\\s+([0-9]\\.[0-9])\\s+([0-9]+)\\s+(.+?)\\s+([0-9]+)\\s+\r\n\r\n(.+)$");
+        restore = false;
+    }
+
+    /**
+     * Sets the file Id
+     * @param fid file Id
+     */
+    public void setFileId(String fid){
+        fileId = fid;
     }
 
     /**
@@ -34,40 +41,49 @@ public class RestoreThread extends MulticastThread{
      * processes valid messages. From the valid ones it chooses
      * the chunk content which is relative to the file's id and
      * it's still missing from an array of chunks( this is done
-     * because chunks can come unordered )
+     * because chunks can come unordered ) It also ignores
+     * duplicates
      */
     public void run() {
-        //Recieve CHUNK messages from the MDR and create file
-        int numChunks = 3; //peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
-        String[] chunks = new String[numChunks];
         int i = 0;
-        while (i < numChunks){
-            try {
-                //message = peer.getRestoreSocket().receive(65536).trim();
-                String example = "CHUNK 1.0 1 123abc 1 \r\n\r\nOlá,eu sou o mestre do kong foo!";
-                ArrayList<String> groups = regex.getGroups(example);
-
-                //Check if its a valid message and its from version 1.0
-                if(groups.get(0).equals("CHUNK") && groups.get(1).equals("1.0")){
-                    fileId = groups.get(3);
-                    int chunkNumber = i;
-                    if(chunks[chunkNumber] == null){
-                        chunks[chunkNumber] = groups.get(5);
-                        i++;
+        while (active){
+            String example = "CHUNK 1.0 1 123abc 1 \r\n\r\nOlá,eu sou o mestre do kong foo!"; //message = peer.getRestoreSocket().receive(65536).trim();
+            if(restore){
+                int numChunks = 3; //peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+                String[] chunks = new String[numChunks];
+                try {
+                    ArrayList<String> groups = regex.getGroups(example);
+                    //Check if its a valid message and its from version 1.0
+                    int initiatorId = Integer.parseInt(groups.get(2));
+                    String version = groups.get(1);
+                    String fid = groups.get(3);
+                    if(groups.get(0).equals("CHUNK") && version.equals("1.0") && initiatorId != peer.getID() && fid.equals(fileId)){
+                        fileId = groups.get(3);
+                        int chunkNumber = i;
+                        if(chunks[chunkNumber] == null){
+                            chunks[chunkNumber] = groups.get(5);
+                            i++;
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    peer.sendToClient("File couldn't be restored");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                peer.sendToClient("File couldn't be restored");
+                //Reset restore flag after file restored
+                if(i >= numChunks){
+                    restore = false;
+                    i = 0;
+                    peer.sendToClient("File is fully restored");
+                }
             }
         }
+    }
 
-        try {
-            sleep(1000);
-            peer.sendToClient("File is fully restored");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    /**
+     * Sets restore flag to true
+     */
+    public void setRestore(){
+        restore = true;
     }
 
     @Deprecated

@@ -112,6 +112,7 @@ public class Peer {
 
         multicastControl = new MC(this, fileStorage);
         //multicastControl.run();
+        restoreThread = new RestoreThread(this,"restore");
         //Initialize TCP socket
         try {
             serverSocket = new ServerSocket(ID);
@@ -136,6 +137,8 @@ public class Peer {
         } catch (Exception e) {
             fileStorage = new FileStorage(path);
         }
+
+        restoreThread.start();
 
         //Main loop for serving the client interface
         while (active){
@@ -167,9 +170,8 @@ public class Peer {
                                 filename = groups.get(1);
                                 String cwd = System.getProperty("user.dir");
                                 String filePath = cwd + File.separator + filename;
-                                restoreThread = new RestoreThread(this,"restore",filePath);
                                 RestoreProtocol rp = new RestoreProtocol(this);
-                                rp.getChunk(filePath);
+                                rp.getChunks(filePath);
                                 break;
                             case "DELETE":
                                 //TODO
@@ -185,11 +187,6 @@ public class Peer {
                 }else {
                     sendToClient("Invalid Message");
                 }
-
-                //Close socket and streams
-                is.close();
-                os.close();
-                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -266,4 +263,5 @@ public class Peer {
             e.printStackTrace();
         }
     }
+
 }

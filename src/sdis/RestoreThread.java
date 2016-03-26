@@ -1,19 +1,22 @@
 package sdis;
 
 import sdis.Utils.Regex;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
-import java.io.File;
 
 /**
- * Restore thread handles the MDR channel for a peer
+ * Restore thread handles the MDR channel for a peer and
+ * restores a file requested by the client
  */
 public class RestoreThread extends MulticastThread{
+    private final String pattern = "^(CHUNK)\\s+([0-9]\\.[0-9])\\s+([0-9]+)\\s+(.+?)\\s+([0-9]+)\\s+\r\n\r\n(.+)$";
+
     private Regex regex;
     private String fileId;
+    private File file;
     private volatile boolean restore;
 
     /**
@@ -24,7 +27,7 @@ public class RestoreThread extends MulticastThread{
      */
     public RestoreThread(Peer p, String name){
         super(p,name);
-        regex = new Regex("^(CHUNK)\\s+([0-9]\\.[0-9])\\s+([0-9]+)\\s+(.+?)\\s+([0-9]+)\\s+\r\n\r\n(.+)$");
+        regex = new Regex(pattern);
         restore = false;
     }
 
@@ -44,23 +47,36 @@ public class RestoreThread extends MulticastThread{
      * because chunks can come unordered ) It also ignores
      * duplicates
      */
-    public void run() {
+    public void run2() {
         int i = 0;
+        String[] chunks = null;
+        int numChunks = 0;
+        /**
+         * This code block is active whenever the client sends a RESTORE
+         * command. It then tries to create a file and write to it with
+         * the messages it receives from the network that reference the
+         * file identification number
+         */
         while (active){
-            String example = "CHUNK 1.0 1 123abc 1 \r\n\r\nOlá,eu sou o mestre do kong foo!"; //message = peer.getRestoreSocket().receive(65536).trim();
+            String example = "CHUNK 1.0 1 123abc 1 \r\n\r\nOlá,eu sou o mestre do kong foo!"; //TODO message = peer.getRestoreSocket().receive(65536).trim();
+
             if(restore){
-                int numChunks = 3; //peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
-                String[] chunks = new String[numChunks];
+                //Create file
+                if (file == null){
+                    //TODO file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
+                    file = new File("test");
+                    numChunks = 3; //TODO peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+                    chunks = new String[numChunks];
+                }
                 try {
                     ArrayList<String> groups = regex.getGroups(example);
-                    //Check if its a valid message and its from version 1.0
                     int initiatorId = Integer.parseInt(groups.get(2));
                     String version = groups.get(1);
                     String fid = groups.get(3);
                     if(groups.get(0).equals("CHUNK") && version.equals("1.0") && initiatorId != peer.getID() && fid.equals(fileId)){
                         fileId = groups.get(3);
                         int chunkNumber = i;
-                        if(chunks[chunkNumber] == null){
+                        if(chunks != null && chunks[chunkNumber] == null){
                             chunks[chunkNumber] = groups.get(5);
                             i++;
                         }
@@ -69,21 +85,73 @@ public class RestoreThread extends MulticastThread{
                     e.printStackTrace();
                     peer.sendToClient("File couldn't be restored");
                 }
-                //Reset restore flag after file restored
-                if(i >= numChunks){
+
+                /**
+                 * Create file and reset variables after file restored. The String
+                 * array 'chunks' must be different than null for obvious reasons.
+                 * After this block runs a message is sent to the client telling
+                 * that the file is restored if an error did not occur. All settings
+                 * are restored and a new RESTORE command can be made by the client.
+                 */
+                if(i >= numChunks && chunks != null){
+                    try {
+                        FileWriter fw;
+                        fw = new FileWriter(file,true);
+                        BufferedWriter bw = new BufferedWriter(fw);
+                        for (String chunk : chunks) {
+                                bw.write(chunk);
+                        }
+                        bw.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        peer.sendToClient("An error has occurred and file couldn't be restored");
+                    }
+                    try {
+                        //If file doesn't exist
+                        if(file.createNewFile()){
+                            peer.sendToClient("File is fully restored");
+                        //If file already exists
+                        }else{
+                            peer.sendToClient("File is fully restored");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     restore = false;
                     i = 0;
-                    peer.sendToClient("File is fully restored");
+                    file = null;
+                    numChunks = 0;
+                    chunks = null;
                 }
             }
         }
     }
 
+    public void run(){
+        while(active){
+            message = peer.getMDR().messageQueue.poll();
+            if(message != null){
+                System.out.println(message);
+            }
+        }
+    }
+
     /**
-     * Sets restore flag to true
+     * Sets restore flag to true so that the run method can
+     * evaluate CHUNK messages and restore the file intended
+     * by the client
      */
     public void setRestore(){
         restore = true;
+    }
+
+    /**
+     * Unsets the restore flag so that anyone can interrupt
+     * the reading of CHUNK messages of a certain file requested
+     * by the user
+     */
+    public void unsetRestore(){
+        restore = false;
     }
 
     @Deprecated

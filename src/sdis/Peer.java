@@ -2,6 +2,7 @@ package sdis;
 
 import sdis.MulticastChannels.MC;
 import sdis.MulticastChannels.MDB;
+import sdis.MulticastChannels.MDR;
 import sdis.Protocols.BackupProtocol;
 import sdis.Protocols.RestoreProtocol;
 import sdis.Utils.Regex;
@@ -31,6 +32,7 @@ public class Peer {
     private MulticastThread multicastDataRestore;
     private MC multicastControl;
     private MDB multicastDataBackup;
+    private MDR mdr;
     private RestoreThread restoreThread;
     private ServerSocket serverSocket;
     private FileStorage fileStorage;
@@ -115,6 +117,7 @@ public class Peer {
         multicastControl = new MC(this, fileStorage);
         //multicastControl.run();
         multicastDataBackup = new MDB(this, fileStorage);
+        mdr = new MDR(this,"MDR");
         restoreThread = new RestoreThread(this,"restore");
 
         //Initialize TCP socket
@@ -142,6 +145,8 @@ public class Peer {
             fileStorage = new FileStorage(path);
         }
 
+        new TestThread(restoreSocket).start();
+        mdr.start();
         restoreThread.start();
 
         //Main loop for serving the client interface
@@ -251,6 +256,10 @@ public class Peer {
         return MDR_PORT;
     }
 
+    public MDR getMDR(){
+        return  mdr;
+    }
+
     public FileStorage getFileStorage(){
         return fileStorage;
     }
@@ -265,6 +274,29 @@ public class Peer {
             os.write(message.getBytes(),0,message.length());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public class TestThread extends Thread{
+        DataSocket socket;
+        boolean lel;
+
+        public TestThread(DataSocket d){
+            socket = d;
+            lel = true;
+        }
+
+        @Override
+        public void run() {
+            int i = 0;
+            while (i < 5){
+                try {
+                    socket.send("CHUNK 1.0 1 abc123 1 \r\n\r\nMENSAGEM nº" + i ,MDR_IP,MDR_PORT);
+                    i++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

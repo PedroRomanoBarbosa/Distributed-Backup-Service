@@ -12,14 +12,14 @@ public class DataSocket extends MulticastSocket {
         super(port);
     }
 
-    public synchronized String receive(int size) throws IOException {
+    public String receive(int size) throws IOException {
         byte[] buffer = new byte[size];
         DatagramPacket packet = new DatagramPacket(buffer,buffer.length);
         this.receive(packet);
         return new String(packet.getData()).trim();
     }
 
-    public synchronized DatagramPacket receivePacket(int size) throws IOException {
+    public DatagramPacket receivePacket(int size) throws IOException {
         byte[] buffer = new byte[size];
         DatagramPacket packet = new DatagramPacket(buffer,buffer.length);
         this.receive(packet);

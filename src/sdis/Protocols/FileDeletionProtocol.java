@@ -38,6 +38,7 @@ public class FileDeletionProtocol {
 
         //Elimina da "base de dados"
         fileStorage.getBackedUpFiles().remove(fileStorage.getBackedUpFilesByPath(filename));
+        fileStorage.updateDataBase();
 }
 
     public void send(Peer peer, byte[] message) {

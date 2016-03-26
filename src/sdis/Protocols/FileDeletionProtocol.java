@@ -40,7 +40,7 @@ public class FileDeletionProtocol {
 
         //Elimina da "base de dados"
         fileStorage.getBackedUpFiles().remove(fileStorage.getBackedUpFilesByPath(filename));
-        fileStorage.updateDataBase();
+        fileStorage.updateDataBase(peer.getID());
 }
 
     public void send(Peer peer, byte[] message) {

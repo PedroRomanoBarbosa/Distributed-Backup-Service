@@ -117,7 +117,7 @@ public class Peer {
         final String path = System.getProperty("user.dir");
         //Load
         try {
-            FileInputStream fis = new FileInputStream(path + java.io.File.separator + ".info");
+            FileInputStream fis = new FileInputStream(path + java.io.File.separator + ID + ".info");
             ObjectInputStream ois = new ObjectInputStream(fis);
 
             fileStorage = (FileStorage) ois.readObject();

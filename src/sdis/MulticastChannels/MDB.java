@@ -100,7 +100,7 @@ public class MDB extends Thread {
                     }
 
                     //Update dos dados a guardar
-                    fileStorage.updateDataBase();
+                    fileStorage.updateDataBase(peer.getID());
 
                     //Cria resposta
                     String responseHeader = "STORED " + "1.0" + " " + peer.getID() + " " + message[3] + " " + message[4] + " " + "\r\n\r\n";

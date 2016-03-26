@@ -74,10 +74,10 @@ public class FileStorage implements Serializable {
         return null;
     }
 
-    public void updateDataBase() {
+    public void updateDataBase(int ID) {
         //Save
         try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + java.io.File.separator + ".info");
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + java.io.File.separator + ID + ".info");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
             oos.writeObject(this);

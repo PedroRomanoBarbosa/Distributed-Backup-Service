@@ -40,12 +40,12 @@ public class BackupProtocol {
         for (int i = 0; i < fileToBackup.getChunks().size(); i++) {
 
             //TODO Alterar o campo 1.0 para Versao Real
-            String messageHeader = "PUTCHUNK " + "1.0" + " " + peer.getID() + " " + fileToBackup.getFileID() + " " + (i+1) + " " +
+            String messageHeader = "PUTCHUNK " + "1.0" + " " + peer.getID() + " " + fileToBackup.getFileID() + " " + i + " " +
                     fileToBackup.getReplicationDegree() + " " + "\r\n\r\n";
 
             byte[] fullMessage = new byte[messageHeader.getBytes().length + fileToBackup.getChunks().get(i).length];
             System.out.println(messageHeader);
-            System.out.println(new String(fileToBackup.getChunks().get(i)));
+            //System.out.println(new String(fileToBackup.getChunks().get(i)));
 
             //FONTE: http://stackoverflow.com/questions/5368704/appending-a-byte-to-the-end-of-another-byte
             System.arraycopy(messageHeader.getBytes(), 0, fullMessage, 0, messageHeader.getBytes().length);
@@ -54,7 +54,7 @@ public class BackupProtocol {
             new SendThread(peer, fullMessage, replicationDegree, fileToBackup, i).run();
         }
 
-        System.out.println("File backed up!\n");
+        System.out.println("File " + filename + " sent to the network!\n");
     }
 
 

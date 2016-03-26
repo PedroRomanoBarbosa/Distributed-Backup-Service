@@ -3,11 +3,9 @@ package sdis;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -135,6 +133,15 @@ public class File {
             e.printStackTrace();
         }
 
+    }
+
+    public void removeChunks() {
+        java.io.File dir = new java.io.File(id);
+
+        if (dir.isDirectory())
+        {
+            dir.delete();
+        }
     }
 
 }

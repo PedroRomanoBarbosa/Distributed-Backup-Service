@@ -3,6 +3,7 @@ package sdis.MulticastChannels;
 import sdis.FileStorage;
 import sdis.Peer;
 
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -62,6 +63,18 @@ public class MC extends Thread {
                             e.printStackTrace();
                         }
                     }
+                    break;
+                }
+
+                case "DELETE": {
+                    sdis.File file = fileStorage.getStoredFilesById(message[3]);
+
+                    if (file != null) {
+                        file.removeChunks();
+                        fileStorage.getStoredFiles().remove(file);
+                        System.out.println("DELETED file " + file.getFileID());
+                    }
+
                     break;
                 }
 

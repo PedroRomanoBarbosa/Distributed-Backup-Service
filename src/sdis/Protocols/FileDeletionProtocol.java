@@ -27,11 +27,13 @@ public class FileDeletionProtocol {
         String messageHeader = "DELETE " + "1.0" + " " + peer.getID() + " " + fileStorage.getBackedUpFilesByPath(filename).getFileID() + "\r\n\r\n";
         System.out.println(messageHeader);
 
-        try {
-            send(peer, messageHeader.getBytes());
+        for (int i = 0; i < 3; i++) {
+            try {
+                send(peer, messageHeader.getBytes());
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         System.out.println("File " + fileStorage.getBackedUpFilesByPath(filename) + " deleted.");

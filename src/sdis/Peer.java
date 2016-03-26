@@ -197,19 +197,6 @@ public class Peer {
             }
         }
 
-        //Save
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + java.io.File.separator + ".info");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(fileStorage);
-
-            oos.close();
-            fos.close();
-
-        } catch (Exception e) {
-
-        }
     }
 	
 	public final int getID() {

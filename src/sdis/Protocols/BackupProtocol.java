@@ -36,6 +36,7 @@ public class BackupProtocol {
         }
 
         fileStorage.addBackedUpFile(fileToBackup);
+        fileStorage.updateDataBase();
 
         for (int i = 0; i < fileToBackup.getChunks().size(); i++) {
 

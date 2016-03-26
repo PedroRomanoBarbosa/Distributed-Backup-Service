@@ -1,5 +1,7 @@
 package sdis;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
@@ -62,6 +64,22 @@ public class FileStorage implements Serializable {
             if (f.getPathFile().equals(filePath))
                 return f;
         return null;
+    }
+
+    public void updateDataBase() {
+        //Save
+        try {
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + java.io.File.separator + ".info");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(this);
+
+            oos.close();
+            fos.close();
+
+        } catch (Exception e) {
+
+        }
     }
 
 }

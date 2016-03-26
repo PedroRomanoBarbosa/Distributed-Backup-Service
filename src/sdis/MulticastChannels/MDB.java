@@ -70,7 +70,7 @@ public class MDB extends Thread {
 
                 //Se ainda nao tiver recebido nenhum chunk do ficheiro
                 if (file == null) {
-                    file = new sdis.File(message[4], Integer.parseInt(message[5]), 0);
+                    file = new sdis.File(message[3], Integer.parseInt(message[5]), 0);
 
                     file.getChunks().put(Integer.parseInt(message[4]), messag);
                     file.storeChunk(Integer.parseInt(message[4]));
@@ -83,6 +83,8 @@ public class MDB extends Thread {
                     file.storeChunk(Integer.parseInt(message[4]));
                 }
 
+                //Update dos dados a guardar
+                fileStorage.updateDataBase();
 
                 //Cria resposta
                 String responseHeader = "STORED " + "1.0" + " " + peer.getID() + " " + message[3] + " " + message[4] + " " + "\r\n\r\n";

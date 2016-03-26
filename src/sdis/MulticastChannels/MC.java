@@ -3,9 +3,11 @@ package sdis.MulticastChannels;
 import sdis.FileStorage;
 import sdis.Peer;
 
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 public class MC extends Thread {
 
@@ -25,36 +27,48 @@ public class MC extends Thread {
                 DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
                 String message = new String(packet.getData(), 0, packet.getLength());
 
-                try {
-                    messageDealer(packet.getAddress(), message);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                new ReceiveThread(packet.getAddress(), message);
+
             } catch (Exception e) {
 
             }
         }
     }
 
-    private void messageDealer(InetAddress address, String messag) {
-        String message[] = messag.split(" ");
+    public class ReceiveThread extends Thread {
 
-        switch (message[0]) {
-            case "STORED": {
-                sdis.File file = fileStorage.getBackedUpFilesById(message[3]);
+        InetAddress address;
+        String messag;
 
-                if (file != null) {
-                    try {
-                        file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(message[2]));
-                    } catch (UnknownHostException e) {
-                        e.printStackTrace();
+        public ReceiveThread(InetAddress addr, String mess) {
+            address = addr;
+            messag = mess;
+        }
+
+        public void run() {
+            messageDealer(address, messag);
+        }
+
+        private void messageDealer(InetAddress address, String messag) {
+            String message[] = messag.split(" ");
+
+            switch (message[0]) {
+                case "STORED": {
+                    sdis.File file = fileStorage.getBackedUpFilesById(message[3]);
+
+                    if (file != null) {
+                        try {
+                            file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(message[2]));
+                        } catch (UnknownHostException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    break;
                 }
-                break;
-            }
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
     }
 }

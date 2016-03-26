@@ -52,7 +52,7 @@ public class BackupProtocol {
             System.arraycopy(messageHeader.getBytes(), 0, fullMessage, 0, messageHeader.getBytes().length);
             System.arraycopy(fileToBackup.getChunks().get(i), 0, fullMessage, messageHeader.getBytes().length, fileToBackup.getChunks().get(i).length);
             // System.out.println(fullMessage.toString());
-            new SendThread(peer, fullMessage, replicationDegree, fileToBackup, i).run();
+            new SendThread(peer, fullMessage, replicationDegree, fileToBackup, i).start();
         }
 
         System.out.println("File " + filename + " sent to the network!\n");
@@ -62,7 +62,7 @@ public class BackupProtocol {
     /*
     SUBCLASSE para a thread de envio dos chunks
      */
-    public class SendThread implements Runnable {
+    public class SendThread extends Thread {
 
         private Peer peer;
         private byte[] fullMessage;

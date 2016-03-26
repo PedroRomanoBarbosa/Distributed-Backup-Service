@@ -3,6 +3,7 @@ package sdis;
 import sdis.MulticastChannels.MC;
 import sdis.MulticastChannels.MDB;
 import sdis.Protocols.BackupProtocol;
+import sdis.Protocols.FileDeletionProtocol;
 import sdis.Protocols.RestoreProtocol;
 import sdis.Utils.Regex;
 
@@ -179,8 +180,8 @@ public class Peer {
                                 rp.getChunks(filePath);
                                 break;
                             case "DELETE":
-                                //TODO
                                 filename = groups.get(1);
+                                new FileDeletionProtocol(this, fileStorage, filename);
                                 break;
                             case "RECLAIM":
                                 //TODO

@@ -9,7 +9,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 public class BackupProtocol {
-    private Scanner reader = new Scanner(System.in);
     private int maxReplicationDegree = 9;
     private int maxTriesPerChunk = 5;
 

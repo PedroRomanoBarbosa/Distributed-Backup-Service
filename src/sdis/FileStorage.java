@@ -52,6 +52,14 @@ public class FileStorage implements Serializable {
         return null;
     }
 
+    public File getBackedUpFilesByPath(String filename) {
+        String filePath = System.getProperty("user.dir") + java.io.File.separator + filename;
+        for (File f : backedUpFiles)
+            if (f.getPathFile().equals(filePath))
+                return f;
+        return null;
+    }
+
     public File getStoredFilesById(String Id) {
         for (File f : storedFiles)
             if (f.getFileID().equals(Id))

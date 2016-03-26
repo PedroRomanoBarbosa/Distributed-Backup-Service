@@ -186,6 +186,9 @@ public class Peer {
                             case "RECLAIM":
                                 //TODO
                                 break;
+                            default:
+                                System.out.println("Invalid protocol!");
+                                break;
                         }
                     }else {
                         sendToClient("Invalid Message");

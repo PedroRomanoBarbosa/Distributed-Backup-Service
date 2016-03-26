@@ -3,6 +3,7 @@ package sdis.MulticastChannels;
 import sdis.FileStorage;
 import sdis.Peer;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -110,9 +111,17 @@ public class MDB extends Thread {
                     } catch (InterruptedException e) {
                     }
 
-                    //Tenta enviar
+                    //Envio da mensagem
                     try {
-                        peer.getBackupSocket().send(responseHeader, peer.getMC_IP(), peer.getMC_PORT());
+                        DatagramPacket packet = new DatagramPacket(responseHeader.getBytes(), responseHeader.getBytes().length, peer.getMC_IP(), peer.getMC_PORT());
+
+                        try {
+                            peer.getControlSocket().send(packet);
+                            System.out.println(responseHeader);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

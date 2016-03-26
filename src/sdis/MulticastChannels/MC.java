@@ -21,13 +21,11 @@ public class MC extends Thread {
 
     @Override
     public void run() {
-        while (true) {
-
+         while (true) {
             try {
                 DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
                 String message = new String(packet.getData(), 0, packet.getLength());
-
-                new ReceiveThread(packet.getAddress(), message);
+                new ReceiveThread(packet.getAddress(), message).start();
 
             } catch (Exception e) {
 
@@ -59,6 +57,7 @@ public class MC extends Thread {
                     if (file != null) {
                         try {
                             file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(message[2]));
+                            System.out.println(InetAddress.getByName(message[2]) + " STORED chunk " + Integer.parseInt(message[4]) + " of file "+ file.getFileID());
                         } catch (UnknownHostException e) {
                             e.printStackTrace();
                         }

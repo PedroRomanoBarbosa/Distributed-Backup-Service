@@ -87,6 +87,7 @@ public class BackupProtocol {
 
                     try {
                         peer.getBackupSocket().send(packet);
+                        System.out.println("Chunk number " + chunkNo + " of file " + file.getFileID() + " sent to the network");
 
                     } catch (IOException e) {
                         e.printStackTrace();

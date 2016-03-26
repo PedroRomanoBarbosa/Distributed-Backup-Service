@@ -27,7 +27,7 @@ public class Peer {
     DataOutputStream os;
 
     private boolean active;
-    private DataSocket controlSocket,backupSocket, restoreSocket;
+    private DataSocket controlSocket, backupSocket, restoreSocket;
     private MulticastThread multicastDataRestore;
     private MC multicastControl;
     private MDB multicastDataBackup;

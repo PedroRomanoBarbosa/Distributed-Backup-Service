@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 
 
 public class DataSocket extends MulticastSocket {
@@ -16,7 +17,14 @@ public class DataSocket extends MulticastSocket {
         byte[] buffer = new byte[size];
         DatagramPacket packet = new DatagramPacket(buffer,buffer.length);
         this.receive(packet);
-        return new String(packet.getData()).trim();
+        return new String(packet.getData(),packet.getOffset(),packet.getLength());
+    }
+
+    public byte[] receiveData(int size) throws IOException {
+        byte[] buffer = new byte[size];
+        DatagramPacket packet = new DatagramPacket(buffer,buffer.length);
+        this.receive(packet);
+        return Arrays.copyOfRange(packet.getData(),packet.getOffset(),packet.getLength());
     }
 
     public DatagramPacket receivePacket(int size) throws IOException {

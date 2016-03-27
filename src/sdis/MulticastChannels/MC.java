@@ -1,14 +1,12 @@
 package sdis.MulticastChannels;
 
+import sdis.ChunkThread;
 import sdis.FileStorage;
 import sdis.Peer;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 
 public class MC extends Thread {
 
@@ -26,6 +24,7 @@ public class MC extends Thread {
             try {
                 DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
                 String message = new String(packet.getData(), 0, packet.getLength());
+                //System.out.println("[MC] " + message);
                 new ReceiveThread(packet.getAddress(), message).start();
 
             } catch (Exception e) {
@@ -75,6 +74,13 @@ public class MC extends Thread {
                         System.out.println("DELETED file " + file.getFileID());
                     }
 
+                    break;
+                }
+
+                case "GETCHUNK": {
+                    if(true/*Integer.parseInt(message[2]) != peer.getID()*/){
+                        new ChunkThread(peer,message[3],Integer.parseInt(message[4])).start();
+                    }
                     break;
                 }
 

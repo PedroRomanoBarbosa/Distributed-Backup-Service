@@ -30,7 +30,6 @@ public class Peer {
 
     private boolean active;
     private DataSocket controlSocket, backupSocket, restoreSocket;
-    private MulticastThread multicastDataRestore;
     private MC multicastControl;
     private MDB multicastDataBackup;
     private MDR mdr;
@@ -168,7 +167,7 @@ public class Peer {
                     ArrayList<String> groups = regex.getGroups(clientMessage);
                     if(!groups.isEmpty()){
                         String protocol = groups.get(0);
-                        String filename = "";
+                        String filename;
                         int degree;
                         //TODO: Decide which parameter is used in each of the protocols and call the functions
                         switch (protocol){
@@ -183,7 +182,7 @@ public class Peer {
                                 String filePath = cwd + File.separator + filename;
                                 RestoreProtocol rp = new RestoreProtocol(this);
                                 rp.getChunks(filePath);
-                                new TestThread(restoreSocket).start();
+                                //new TestThread(restoreSocket).start();
                                 break;
                             case "DELETE":
                                 filename = groups.get(1);

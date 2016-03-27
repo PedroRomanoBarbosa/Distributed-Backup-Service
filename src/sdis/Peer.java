@@ -2,6 +2,7 @@ package sdis;
 
 import sdis.MulticastChannels.MC;
 import sdis.MulticastChannels.MDB;
+import sdis.MulticastChannels.MDR;
 import sdis.Protocols.BackupProtocol;
 import sdis.Protocols.FileDeletionProtocol;
 import sdis.Protocols.RestoreProtocol;
@@ -32,6 +33,7 @@ public class Peer {
     private MulticastThread multicastDataRestore;
     private MC multicastControl;
     private MDB multicastDataBackup;
+    private MDR mdr;
     private RestoreThread restoreThread;
     private ServerSocket serverSocket;
     private FileStorage fileStorage;
@@ -113,6 +115,13 @@ public class Peer {
             System.err.println("Error joining multicast data restore channel group");
         }
 
+        multicastControl = new MC(this, fileStorage);
+        //multicastControl.run();
+        multicastDataBackup = new MDB(this, fileStorage);
+        mdr = new MDR(this,"MDR");
+        restoreThread = new RestoreThread(this,"restore");
+
+
         //FONTE: http://stackoverflow.com/questions/3153337/get-current-working-directory-in-java
         final String path = System.getProperty("user.dir");
         //Load
@@ -129,10 +138,6 @@ public class Peer {
             fileStorage = new FileStorage(path);
         }
 
-        multicastControl = new MC(this, fileStorage);
-        multicastDataBackup = new MDB(this, fileStorage);
-        restoreThread = new RestoreThread(this,"restore");
-
         //Initialize TCP socket
         try {
             serverSocket = new ServerSocket(ID);
@@ -142,6 +147,7 @@ public class Peer {
     }
 
     public void start(){
+        mdr.start();
         restoreThread.start();
         multicastControl.start();
         multicastDataBackup.start();
@@ -172,12 +178,12 @@ public class Peer {
                                 new BackupProtocol(this, fileStorage, filename, degree);
                                 break;
                             case "RESTORE":
-                                //Create file path
                                 filename = groups.get(1);
                                 String cwd = System.getProperty("user.dir");
                                 String filePath = cwd + File.separator + filename;
                                 RestoreProtocol rp = new RestoreProtocol(this);
                                 rp.getChunks(filePath);
+                                new TestThread(restoreSocket).start();
                                 break;
                             case "DELETE":
                                 filename = groups.get(1);
@@ -243,6 +249,10 @@ public class Peer {
         return MDR_PORT;
     }
 
+    public MDR getMDR(){
+        return  mdr;
+    }
+
     public FileStorage getFileStorage(){
         return fileStorage;
     }
@@ -257,6 +267,29 @@ public class Peer {
             os.write(message.getBytes(),0,message.length());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public class TestThread extends Thread{
+        DataSocket socket;
+        boolean lel;
+
+        public TestThread(DataSocket d){
+            socket = d;
+            lel = true;
+        }
+
+        @Override
+        public void run() {
+            int i = 0;
+            while (i < 5){
+                try {
+                    socket.send("CHUNK 1.0 1 123abc " + i + " \r\n\r\nMENSAGEM nº" + i + "\n" ,MDR_IP,MDR_PORT);
+                    i++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

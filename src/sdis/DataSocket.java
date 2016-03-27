@@ -26,7 +26,7 @@ public class DataSocket extends MulticastSocket {
         return packet;
     }
 
-    public synchronized void send(String m, InetAddress ip, int port) throws IOException {
+    public void send(String m, InetAddress ip, int port) throws IOException {
         byte[] buffer = m.getBytes();
         DatagramPacket packet = new DatagramPacket(buffer,buffer.length,ip,port);
         this.send(packet);

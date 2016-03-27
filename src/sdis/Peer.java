@@ -145,7 +145,6 @@ public class Peer {
             fileStorage = new FileStorage(path);
         }
 
-        new TestThread(restoreSocket).start();
         mdr.start();
         restoreThread.start();
 
@@ -175,12 +174,12 @@ public class Peer {
                                 new BackupProtocol(this, fileStorage, filename, degree);
                                 break;
                             case "RESTORE":
-                                //Create file path
                                 filename = groups.get(1);
                                 String cwd = System.getProperty("user.dir");
                                 String filePath = cwd + File.separator + filename;
                                 RestoreProtocol rp = new RestoreProtocol(this);
                                 rp.getChunks(filePath);
+                                new TestThread(restoreSocket).start();
                                 break;
                             case "DELETE":
                                 //TODO
@@ -291,7 +290,7 @@ public class Peer {
             int i = 0;
             while (i < 5){
                 try {
-                    socket.send("CHUNK 1.0 1 abc123 1 \r\n\r\nMENSAGEM nº" + i ,MDR_IP,MDR_PORT);
+                    socket.send("CHUNK 1.0 1 123abc " + i + " \r\n\r\nMENSAGEM nº" + i + "\n" ,MDR_IP,MDR_PORT);
                     i++;
                 } catch (IOException e) {
                     e.printStackTrace();

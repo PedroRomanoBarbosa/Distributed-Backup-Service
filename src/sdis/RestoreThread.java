@@ -5,6 +5,7 @@ import sdis.Utils.Regex;
 import java.io.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -48,6 +49,7 @@ public class RestoreThread extends MulticastThread{
      * duplicates
      */
     public void run2() {
+        /*
         int i = 0;
         String[] chunks = null;
         int numChunks = 0;
@@ -56,7 +58,7 @@ public class RestoreThread extends MulticastThread{
          * command. It then tries to create a file and write to it with
          * the messages it receives from the network that reference the
          * file identification number
-         */
+         *
         while (active){
             String example = "CHUNK 1.0 1 123abc 1 \r\n\r\nOlá,eu sou o mestre do kong foo!"; //TODO message = peer.getRestoreSocket().receive(65536).trim();
 
@@ -92,7 +94,7 @@ public class RestoreThread extends MulticastThread{
                  * After this block runs a message is sent to the client telling
                  * that the file is restored if an error did not occur. All settings
                  * are restored and a new RESTORE command can be made by the client.
-                 */
+                 *
                 if(i >= numChunks && chunks != null){
                     try {
                         FileWriter fw;
@@ -124,14 +126,70 @@ public class RestoreThread extends MulticastThread{
                     chunks = null;
                 }
             }
-        }
+        }*/
     }
 
+    /**
+     * Gets the messages from the concurrent queue
+     */
     public void run(){
+        int i = 0;
+        String[] chunks = null;
+        int numChunks = 0;
         while(active){
             message = peer.getMDR().messageQueue.poll();
             if(message != null){
-                System.out.println(message);
+                if(restore){
+                    if (file == null){
+                        file = new File("test");    //TODO file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
+                        numChunks = 3;              //TODO peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+                        chunks = new String[numChunks];
+                    }
+                    ArrayList<String> groups = regex.getGroups(message);
+                    int initiatorId = Integer.parseInt(groups.get(2));
+                    String version = groups.get(1);
+                    String fid = groups.get(3);
+                    if(version.equals("1.0") && initiatorId != peer.getID() && fid.equals(fileId)){
+                        fileId = groups.get(3);
+                        int chunkNumber = i;
+                        if(chunks != null && chunks[chunkNumber] == null){
+                            chunks[chunkNumber] = groups.get(5);
+                            i++;
+                        }
+                    }
+                    /**
+                     * Create file and reset variables after file restored. The String
+                     * array 'chunks' must be different than null for obvious reasons.
+                     * After this block runs, a message is sent to the client telling
+                     * that the file is restored if an error did not occur. All settings
+                     * are restored and a new RESTORE command can be made by the client.
+                     */
+                    if(i >= numChunks && chunks != null){
+                        try {
+                            FileWriter fw;
+                            fw = new FileWriter(file,true);
+                            BufferedWriter bw = new BufferedWriter(fw);
+                            for (String chunk : chunks) {
+                                bw.write(chunk);
+                            }
+                            bw.close();
+                            if(file.createNewFile()){
+                                peer.sendToClient("File is fully restored");
+                            }else {
+                                peer.sendToClient("File is fully restored");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            peer.sendToClient("An error has occurred and file couldn't be restored");
+                        }
+
+                        restore = false;
+                        i = 0;
+                        file = null;
+                        numChunks = 0;
+                        chunks = null;
+                    }
+                }
             }
         }
     }

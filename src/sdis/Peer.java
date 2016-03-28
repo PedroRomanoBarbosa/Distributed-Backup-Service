@@ -14,7 +14,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 public class Peer {
     //Constants
@@ -164,20 +163,20 @@ public class Peer {
                     Regex regex = new Regex();
                     regex.setPattern(clientPattern);
                     String clientMessage = new String(packet).trim();
-                    ArrayList<String> groups = regex.getGroups(clientMessage);
-                    if(!groups.isEmpty()){
-                        String protocol = groups.get(0);
+                    String[] groups = regex.getGroups(clientMessage);
+                    if(groups.length != 0){
+                        String protocol = groups[0];
                         String filename;
                         int degree;
                         //TODO: Decide which parameter is used in each of the protocols and call the functions
                         switch (protocol){
                             case "BACKUP":
-                                filename = groups.get(1);
-                                degree = Integer.parseInt(groups.get(3));
+                                filename = groups[1];
+                                degree = Integer.parseInt(groups[3]);
                                 new BackupProtocol(this, fileStorage, filename, degree);
                                 break;
                             case "RESTORE":
-                                filename = groups.get(1);
+                                filename = groups[1];
                                 String cwd = System.getProperty("user.dir");
                                 String filePath = cwd + File.separator + filename;
                                 RestoreProtocol rp = new RestoreProtocol(this);
@@ -185,7 +184,7 @@ public class Peer {
                                 //new TestThread(restoreSocket).start();
                                 break;
                             case "DELETE":
-                                filename = groups.get(1);
+                                filename = groups[1];
                                 new FileDeletionProtocol(this, fileStorage, filename);
                                 break;
                             case "RECLAIM":
@@ -260,6 +259,10 @@ public class Peer {
         return restoreThread;
     }
 
+    /**
+     * Sends a message to the client of this server
+     * @param message Message to send to the client
+     */
     public void sendToClient(String message){
         message = "[SERVER] " + message;
         try {
@@ -269,6 +272,9 @@ public class Peer {
         }
     }
 
+    /**
+     * Test thread to send messages to the channels
+     */
     public class TestThread extends Thread{
         DataSocket socket;
         boolean lel;

@@ -4,7 +4,6 @@ import sdis.Utils.Regex;
 
 import java.io.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -20,7 +19,6 @@ public class RestoreThread extends MulticastThread{
     private String fileId;
     private File file;
     private volatile boolean restore;
-    private volatile boolean chunk;
 
     /**
      * Creates a new thread to collect chunks from the network to
@@ -66,13 +64,13 @@ public class RestoreThread extends MulticastThread{
                             numChunks = 3;              //TODO peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
                             chunks = new byte[numChunks][];
                         }
-                        ArrayList<String> groups = regex.getGroups(message);
-                        int initiatorId = Integer.parseInt(groups.get(2));
-                        String version = groups.get(1);
-                        String fid = groups.get(3);
+                        String[] groups = regex.getGroups(message);
+                        int initiatorId = Integer.parseInt(groups[2]);
+                        String version = groups[1];
+                        String fid = groups[3];
                         if(version.equals("1.0") /*&& initiatorId != peer.getID()*/ && fid.equals(fileId)){
-                            fileId = groups.get(3);
-                            int chunkNumber = Integer.parseInt(groups.get(4));
+                            fileId = groups[3];
+                            int chunkNumber = Integer.parseInt(groups[4]);
                             if(chunks != null && chunks[chunkNumber] == null){
                                 chunks[chunkNumber] = body;
                                 i++;
@@ -87,7 +85,6 @@ public class RestoreThread extends MulticastThread{
                          * the client.
                          */
                         if(i >= numChunks && chunks != null){
-                            System.out.println("appending file");
                             try {
                                 FileOutputStream fos = new FileOutputStream(file);
                                 for (byte[] chunk : chunks) {

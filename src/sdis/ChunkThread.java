@@ -3,10 +3,13 @@ package sdis;
 import sdis.Utils.Regex;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * Thread responsible for sending a CHUNK message
+ * to the network
+ */
 public class ChunkThread extends Thread{
     private Peer peer;
     private String fileId;
@@ -15,6 +18,13 @@ public class ChunkThread extends Thread{
     public volatile boolean active;
     public volatile boolean send;
 
+    /**
+     * Creates a new chunk thread that applies the RESTORE
+     * protocol to send a CHUNK message with a chunks's content
+     * @param p the peer associated with this thread
+     * @param fid the file's identification
+     * @param n the chunk number of the chunk
+     */
     public ChunkThread(Peer p,String fid,int n){
         peer = p;
         fileId = fid;
@@ -28,10 +38,13 @@ public class ChunkThread extends Thread{
             try {
                 byte[] content = new byte[(int)f.length()];
                 fis = new FileInputStream(f);
-                fis.read(content,0,content.length);
+                if(fis.read(content,0,content.length) != -1){
+                    chunk = new String(content);
+                    message = "CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n" + chunk;
+                }else {
+                    active = false;
+                }
                 fis.close();
-                chunk = new String(content);
-                message = "CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n" + chunk;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -40,6 +53,12 @@ public class ChunkThread extends Thread{
         }
     }
 
+    /**
+     * Sends a CHUNK messsage with this thread chunk content
+     * after a random sleep time between 0 and 400 milliseconds.
+     * Only sends the message if the MDR didn't received the same
+     * CHUNK message
+     */
     @Override
     public void run() {
         try {
@@ -56,6 +75,10 @@ public class ChunkThread extends Thread{
         }
     }
 
+    /**
+     * Inner class to check for the same CHUNK messages
+     * that the main thread will send
+     */
     public class CheckChunk extends Thread{
         private boolean active;
         private final String pattern = "^(CHUNK)\\s+([0-9]\\.[0-9])\\s+([0-9]+)\\s+(.+?)\\s+([0-9]+)\\s+\r\n\r\n$";
@@ -67,16 +90,21 @@ public class ChunkThread extends Thread{
             regex = new Regex(pattern);
         }
 
+        /**
+         * Watches the head of the queue and checks if the same
+         * CHUNK message received is the same as the one that the
+         * main thread sends
+         */
         @Override
         public void run() {
             while (active){
                 byte[] packet = peer.getMDR().messageQueue.peek();
                 if(packet != null){
                     getHeader(packet);
-                    ArrayList<String> groups = regex.getGroups(new String(header));
-                    if(!groups.isEmpty()){
-                        if(Integer.parseInt(groups.get(2)) == peer.getID() && groups.get(0).equals("CHUNK") && groups.get(1).equals("1.0")){ //TODO ID !=
-                            if(groups.get(3).equals(fileId) && Integer.parseInt(groups.get(4)) == chunkNumber){
+                    String[] groups = regex.getGroups(new String(header));
+                    if(groups.length != 0){
+                        if(Integer.parseInt(groups[2]) == peer.getID() && groups[0].equals("CHUNK") && groups[1].equals("1.0")){ //TODO ID !=
+                            if(groups[3].equals(fileId) && Integer.parseInt(groups[4]) == chunkNumber){
                                 send = false;
                             }
                         }

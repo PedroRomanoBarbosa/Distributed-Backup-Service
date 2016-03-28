@@ -13,6 +13,7 @@ public class DataSocket extends MulticastSocket {
         super(port);
     }
 
+    @Deprecated
     public String receive(int size) throws IOException {
         byte[] buffer = new byte[size];
         DatagramPacket packet = new DatagramPacket(buffer,buffer.length);

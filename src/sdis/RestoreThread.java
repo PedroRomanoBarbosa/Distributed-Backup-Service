@@ -20,6 +20,7 @@ public class RestoreThread extends MulticastThread{
     private String fileId;
     private File file;
     private volatile boolean restore;
+    private volatile boolean chunk;
 
     /**
      * Creates a new thread to collect chunks from the network to

@@ -1,7 +1,6 @@
 package sdis;
 
 public class MulticastThread extends Thread{
-    protected String message;
     protected Peer peer;
     protected boolean active;
 

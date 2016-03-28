@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 public class TestApp {
     private static final String pattern = "^(([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}):)?([0-9]+)$";
@@ -38,26 +37,26 @@ public class TestApp {
     private static void getArguments(String[] args){
         // Get peer ip and port
         Regex regex = new Regex(pattern);
-        ArrayList<String> groups = regex.getGroups(args[0]);
-        if(groups.isEmpty()){
+        String[] groups = regex.getGroups(args[0]);
+        if(groups.length == 0){
             System.err.println("Invalid Ip and port address representation");
             System.exit(1);
-        }else if(groups.get(1) == null){
+        }else if(groups[1] == null){
             local = true;
             try {
                 serverIp = InetAddress.getByName("127.0.0.1");
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
-            serverPort = Integer.parseInt(groups.get(2));
+            serverPort = Integer.parseInt(groups[2]);
         }else {
             local = false;
             try {
-                serverIp = InetAddress.getByName(groups.get(1));
+                serverIp = InetAddress.getByName(groups[1]);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
-            serverPort = Integer.parseInt(groups.get(2));
+            serverPort = Integer.parseInt(groups[2]);
         }
 
         // Get protocol

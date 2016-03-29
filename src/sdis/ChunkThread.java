@@ -103,7 +103,7 @@ public class ChunkThread extends Thread{
                     getHeader(packet);
                     String[] groups = regex.getGroups(new String(header));
                     if(groups.length != 0){
-                        if(Integer.parseInt(groups[2]) == peer.getID() && groups[0].equals("CHUNK") && groups[1].equals("1.0")){ //TODO ID !=
+                        if(Integer.parseInt(groups[2]) != peer.getID() && groups[0].equals("CHUNK") && groups[1].equals("1.0")){
                             if(groups[3].equals(fileId) && Integer.parseInt(groups[4]) == chunkNumber){
                                 send = false;
                             }

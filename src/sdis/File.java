@@ -3,13 +3,14 @@ package sdis;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Vector;
 
-public class File {
+public class File implements Serializable{
     private java.io.File actualFile;
     private String id;
     private String pathFile;

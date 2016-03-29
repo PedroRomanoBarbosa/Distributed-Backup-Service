@@ -24,7 +24,6 @@ public class MC extends Thread {
             try {
                 DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
                 String message = new String(packet.getData(), 0, packet.getLength());
-                //System.out.println("[MC] " + message);
                 new ReceiveThread(packet.getAddress(), message).start();
 
             } catch (Exception e) {
@@ -78,7 +77,8 @@ public class MC extends Thread {
                 }
 
                 case "GETCHUNK": {
-                    if(true/*Integer.parseInt(message[2]) != peer.getID()*/){
+                    if(Integer.parseInt(message[2]) != peer.getID()){
+                        System.out.println(messag);
                         new ChunkThread(peer,message[3],Integer.parseInt(message[4])).start();
                     }
                     break;

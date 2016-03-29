@@ -62,6 +62,7 @@ public class RestoreThread extends MulticastThread{
                 if(restore){
                     splitMessage(packet);
                     String message = new String(header);
+                    System.out.println("[MDR] " + message);
                     if(regex.check(message)){
                         if (file == null){
                             file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());

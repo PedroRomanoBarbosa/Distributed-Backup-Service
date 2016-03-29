@@ -29,7 +29,9 @@ public class FileStorage implements Serializable {
     }
 
     public boolean checkBackedUp(String filePath){
+        System.out.println(backedUpFiles);
         for (File file : backedUpFiles){
+            System.out.println(file.getPathFile());
             if(file.getPathFile().equals(filePath)){
                 return true;
             }
@@ -87,6 +89,12 @@ public class FileStorage implements Serializable {
 
         } catch (Exception e) {
 
+        }
+    }
+
+    public void printFiles(){
+        for (File f : backedUpFiles) {
+            System.out.println(f.getPathFile());
         }
     }
 

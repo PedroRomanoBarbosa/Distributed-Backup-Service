@@ -78,7 +78,7 @@ public class BackupProtocol {
         }
 
         public void run() {
-            int sleepTime = 1;
+            int sleepTime = 1000;
             for (int tries = 0; file.getChunkReplication(chunkNo) < replicationDegree && tries < maxTriesPerChunk; tries++) {
                 //Envio da mensagem
                 try {

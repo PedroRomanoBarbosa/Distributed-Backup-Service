@@ -42,9 +42,10 @@ public class ChunkThread extends Thread{
                 if(fis.read(content,0,content.length) != -1){
                     chunk = content;
                     message = "CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n";
-                    byte[] packet = new byte[message.getBytes().length + chunk.length];
+                    packet = new byte[message.getBytes().length + chunk.length];
                     System.arraycopy(message.getBytes(),0,packet,0,message.getBytes().length);
                     System.arraycopy(chunk,0,packet,message.getBytes().length,chunk.length);
+
                 }else {
                     active = false;
                 }

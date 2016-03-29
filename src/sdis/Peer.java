@@ -9,7 +9,6 @@ import sdis.Protocols.RestoreProtocol;
 import sdis.Utils.Regex;
 
 import java.io.*;
-import java.io.File;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -113,13 +112,6 @@ public class Peer {
             System.err.println("Error joining multicast data restore channel group");
         }
 
-        multicastControl = new MC(this, fileStorage);
-        //multicastControl.run();
-        multicastDataBackup = new MDB(this, fileStorage);
-        mdr = new MDR(this,"MDR");
-        restoreThread = new RestoreThread(this,"restore");
-
-
         //FONTE: http://stackoverflow.com/questions/3153337/get-current-working-directory-in-java
         final String path = System.getProperty("user.dir");
         //Load
@@ -135,6 +127,13 @@ public class Peer {
         } catch (Exception e) {
             fileStorage = new FileStorage(path);
         }
+
+        multicastControl = new MC(this, fileStorage);
+        //multicastControl.run();
+        multicastDataBackup = new MDB(this, fileStorage);
+        mdr = new MDR(this,"MDR");
+        restoreThread = new RestoreThread(this,"restore");
+
 
         //Initialize TCP socket
         try {

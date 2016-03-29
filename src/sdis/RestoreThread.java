@@ -81,6 +81,7 @@ public class RestoreThread extends MulticastThread{
                                 i++;
                             }
                         }
+                        System.out.println("ARRAY:" + chunks.length);
                         /**
                          * Create file and reset variables after file restored. The String
                          * array 'chunks' must be different than null for obvious reasons.

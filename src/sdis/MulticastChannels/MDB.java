@@ -25,9 +25,10 @@ public class MDB extends Thread {
 
             try {
                 DatagramPacket packet = peer.getBackupSocket().receivePacket(64000);
+                byte[] data = Arrays.copyOfRange(packet.getData(),packet.getOffset(),packet.getLength());
                 //String message = new String(packet.getData(), 0, packet.getLength());
 
-                new ReceiveThread(packet.getAddress(), Arrays.copyOf(packet.getData(), packet.getLength())).start();
+                new ReceiveThread(packet.getAddress(), data).start();
 
             } catch (Exception e) {
 

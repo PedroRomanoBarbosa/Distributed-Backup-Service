@@ -120,6 +120,7 @@ public class Peer {
             ObjectInputStream ois = new ObjectInputStream(fis);
 
             fileStorage = (FileStorage) ois.readObject();
+            fileStorage.printFiles();
 
             ois.close();
             fis.close();

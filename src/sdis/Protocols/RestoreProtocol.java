@@ -3,23 +3,21 @@ package sdis.Protocols;
 import sdis.*;
 
 import java.io.*;
-import java.io.File;
 
 /**
  * A class to handle file restore commands and control restore threads
  */
 public class RestoreProtocol {
     private Peer peer;
-    private String filePath;
+    private String filename;
 
     /**
      * Creates a restore thread.
      * @param p The peer associated with this thread
      */
-    public RestoreProtocol(Peer p, String filename){
+    public RestoreProtocol(Peer p, String fn){
         peer = p;
-        filePath = System.getProperty("user.dir") + File.separator + filename;
-        System.out.println(filePath);
+        filename = fn;
     }
 
     /**
@@ -28,12 +26,9 @@ public class RestoreProtocol {
      * mechanism to deal with the CHUNK messages other peers send
      */
     public void getChunks(){
-        if(peer.getFileStorage().checkBackedUp(filePath)){
+        if(peer.getFileStorage().checkBackedUp(filename)){
             String message;
-            if(peer.getFileStorage() == null){
-                System.out.println("é null");
-            }
-            String fileId = peer.getFileStorage().getBackedUpFilesByPath(filePath).getFileID();
+            String fileId = peer.getFileStorage().getBackedUpFilesByPath(filename).getFileID();
             int numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
             String version = "1.0";
             peer.getRestoreThread().setFileId(fileId);

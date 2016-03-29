@@ -40,4 +40,9 @@ public class DataSocket extends MulticastSocket {
         DatagramPacket packet = new DatagramPacket(buffer,buffer.length,ip,port);
         this.send(packet);
     }
+
+    public void sendPacket(byte[] m, InetAddress ip, int port) throws IOException {
+        DatagramPacket packet = new DatagramPacket(m,m.length,ip,port);
+        this.send(packet);
+    }
 }

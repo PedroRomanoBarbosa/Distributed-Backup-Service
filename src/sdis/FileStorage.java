@@ -28,10 +28,9 @@ public class FileStorage implements Serializable {
             storedFiles.add(file);
     }
 
-    public boolean checkBackedUp(String filePath){
-        System.out.println(backedUpFiles);
+    public boolean checkBackedUp(String filename){
+        String filePath = System.getProperty("user.dir") + java.io.File.separator + filename;
         for (File file : backedUpFiles){
-            System.out.println(file.getPathFile());
             if(file.getPathFile().equals(filePath)){
                 return true;
             }

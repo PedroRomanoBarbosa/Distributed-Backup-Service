@@ -15,6 +15,7 @@ public class ChunkThread extends Thread{
     private String fileId;
     public int chunkNumber;
     private String message;
+    private byte[] packet;
     public volatile boolean active;
     public volatile boolean send;
 
@@ -29,7 +30,7 @@ public class ChunkThread extends Thread{
         peer = p;
         fileId = fid;
         chunkNumber = n;
-        String chunk;
+        byte[] chunk;
         send = true;
         java.io.File f = new java.io.File(fileId + java.io.File.separator + chunkNumber);
         if(f.exists()){
@@ -39,8 +40,11 @@ public class ChunkThread extends Thread{
                 byte[] content = new byte[(int)f.length()];
                 fis = new FileInputStream(f);
                 if(fis.read(content,0,content.length) != -1){
-                    chunk = new String(content);
-                    message = "CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n" + chunk;
+                    chunk = content;
+                    message = "CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n";
+                    byte[] packet = new byte[message.getBytes().length + chunk.length];
+                    System.arraycopy(message.getBytes(),0,packet,0,message.getBytes().length);
+                    System.arraycopy(chunk,0,packet,message.getBytes().length,chunk.length);
                 }else {
                     active = false;
                 }
@@ -67,7 +71,7 @@ public class ChunkThread extends Thread{
                 new CheckChunk().start();
                 sleep(time);
                 if (send) {
-                    peer.getRestoreSocket().send(message, peer.getMDR_IP(), peer.getMDR_PORT());
+                    peer.getRestoreSocket().sendPacket(packet, peer.getMDR_IP(), peer.getMDR_PORT());
                 }
             }
         } catch (InterruptedException | IOException e) {

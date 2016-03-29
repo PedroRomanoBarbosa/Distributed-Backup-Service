@@ -60,9 +60,6 @@ public class MDB extends Thread {
                 case "PUTCHUNK": {
 
                     //Se for owner do ficheiro, nao o armazena
-                    if(fileStorage == null) {
-                        System.out.println("É null");
-                    }
                     sdis.File file = fileStorage.getBackedUpFilesById(message[3]);
 
                     if (file != null)

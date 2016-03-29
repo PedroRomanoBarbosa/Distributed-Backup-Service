@@ -55,20 +55,24 @@ public class RestoreThread extends MulticastThread{
         while(active){
             byte[] packet = peer.getMDR().messageQueue.poll();
             if(packet != null){
+                /**
+                 * Get message packet and process the header to check if its
+                 * valid and if it is retrieve the body an store into an array
+                 */
                 if(restore){
                     splitMessage(packet);
                     String message = new String(header);
                     if(regex.check(message)){
                         if (file == null){
-                            file = new File("test");    //TODO file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
-                            numChunks = 3;              //TODO peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+                            file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
+                            numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
                             chunks = new byte[numChunks][];
                         }
                         String[] groups = regex.getGroups(message);
                         int initiatorId = Integer.parseInt(groups[2]);
                         String version = groups[1];
                         String fid = groups[3];
-                        if(version.equals("1.0") /*&& initiatorId != peer.getID()*/ && fid.equals(fileId)){
+                        if(version.equals("1.0") && initiatorId != peer.getID() && fid.equals(fileId)){
                             fileId = groups[3];
                             int chunkNumber = Integer.parseInt(groups[4]);
                             if(chunks != null && chunks[chunkNumber] == null){

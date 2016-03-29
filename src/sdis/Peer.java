@@ -177,11 +177,7 @@ public class Peer {
                                 break;
                             case "RESTORE":
                                 filename = groups[1];
-                                String cwd = System.getProperty("user.dir");
-                                String filePath = cwd + File.separator + filename;
-                                RestoreProtocol rp = new RestoreProtocol(this);
-                                rp.getChunks(filePath);
-                                //new TestThread(restoreSocket).start();
+                                new RestoreProtocol(this,filename).getChunks();
                                 break;
                             case "DELETE":
                                 filename = groups[1];

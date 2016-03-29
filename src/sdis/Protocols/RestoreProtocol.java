@@ -2,33 +2,34 @@ package sdis.Protocols;
 
 import sdis.*;
 
-import java.io.IOException;
+import java.io.*;
 
 /**
  * A class to handle file restore commands and control restore threads
  */
 public class RestoreProtocol {
     private Peer peer;
+    private String filePath;
 
     /**
      * Creates a restore thread.
      * @param p The peer associated with this thread
      */
-    public RestoreProtocol(Peer p){
+    public RestoreProtocol(Peer p, String filename){
         peer = p;
+        filePath = filename;
     }
 
     /**
      * This method tries to send a message to the MC channel
      * restore a certain file and then fires the restore thread
      * mechanism to deal with the CHUNK messages other peers send
-     * @param filePath path of the file to be restored
      */
-    public void getChunks(String filePath){
+    public void getChunks(){
         if(!peer.getFileStorage().checkBackedUp(filePath)){
             String message;
-            int numChunks = 3; //TODO peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
-            String fileId = "123abc"; //TODO String fileId = peer.getFileStorage().getBackedUpFilesByFilePath(filePath).getFileID();
+            String fileId = peer.getFileStorage().getBackedUpFilesByPath(filePath).getFileID();
+            int numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
             String version = "1.0";
             peer.getRestoreThread().setFileId(fileId);
             peer.getRestoreThread().setRestore();

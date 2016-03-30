@@ -69,11 +69,13 @@ public class ChunkThread extends Thread{
         try {
             if(active){
                 int time = new Random().nextInt(1000);
-                new CheckChunk().start();
+                CheckChunk check = new CheckChunk();
+                check.start();
                 sleep(time);
                 if (send) {
                     peer.getRestoreSocket().sendPacket(packet, peer.getMDR_IP(), peer.getMDR_PORT());
                 }
+                check.end();
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
@@ -85,7 +87,7 @@ public class ChunkThread extends Thread{
      * that the main thread will send
      */
     public class CheckChunk extends Thread{
-        private boolean active;
+        private volatile boolean active;
         private final String pattern = "^(CHUNK)\\s+([0-9]\\.[0-9])\\s+([0-9]+)\\s+(.+?)\\s+([0-9]+)\\s+\r\n\r\n$";
         private Regex regex;
         private byte[] header;
@@ -116,6 +118,10 @@ public class ChunkThread extends Thread{
                     }
                 }
             }
+        }
+
+        public void end(){
+            active = false;
         }
 
         /**

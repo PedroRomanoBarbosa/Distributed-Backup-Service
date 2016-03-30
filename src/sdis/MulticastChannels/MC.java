@@ -84,6 +84,13 @@ public class MC extends Thread {
                     break;
                 }
 
+                case "REMOVED": {
+                    if(Integer.parseInt(message[2]) != peer.getID()){
+                        new ChunkThread(peer,message[3],Integer.parseInt(message[4])).start();
+                    }
+                    break;
+                }
+
                 default:
                     break;
             }

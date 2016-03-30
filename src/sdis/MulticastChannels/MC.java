@@ -78,7 +78,6 @@ public class MC extends Thread {
 
                 case "GETCHUNK": {
                     if(Integer.parseInt(message[2]) != peer.getID()){
-                        System.out.println(messag);
                         new ChunkThread(peer,message[3],Integer.parseInt(message[4])).start();
                     }
                     break;

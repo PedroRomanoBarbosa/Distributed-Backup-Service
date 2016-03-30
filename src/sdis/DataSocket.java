@@ -25,7 +25,8 @@ public class DataSocket extends MulticastSocket {
         byte[] buffer = new byte[size];
         DatagramPacket packet = new DatagramPacket(buffer,buffer.length);
         this.receive(packet);
-        return Arrays.copyOfRange(packet.getData(),packet.getOffset(),packet.getLength());
+        return packet.getData();
+        //return Arrays.copyOfRange(packet.getData(),packet.getOffset(),packet.getLength());
     }
 
     public DatagramPacket receivePacket(int size) throws IOException {

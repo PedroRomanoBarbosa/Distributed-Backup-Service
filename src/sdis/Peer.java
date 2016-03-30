@@ -132,7 +132,7 @@ public class Peer {
         multicastControl = new MC(this, fileStorage);
         //multicastControl.run();
         multicastDataBackup = new MDB(this, fileStorage);
-        mdr = new MDR(this,"MDR");
+        mdr = new MDR(restoreSocket);
         restoreThread = new RestoreThread(this,"restore");
 
 

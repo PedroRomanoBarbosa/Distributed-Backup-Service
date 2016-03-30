@@ -50,18 +50,16 @@ public class RestoreThread extends MulticastThread{
      */
     public void run(){
         int i = 0;
-        int iter = 0;
         byte[][] chunks = null;
         int numChunks = 0;
         while(active){
             byte[] packet = peer.getMDR().messageQueue.poll();
             if(packet != null){
-                iter++;
                 /**
                  * Get message packet and process the header to check if its
                  * valid and if it is retrieve the body an store into an array
                  */
-                if(restore){
+                if(false){
                     splitMessage(packet);
                     String message = new String(header);
                     //System.out.println("[MDR] " + message);

@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * This thread reads the MDR socket and puts the message
  * in a concurrent queue to be processed by other threads
  */
-public class MDR {
+public class MDR extends Thread{
     DataSocket restoreSocket;
     private boolean active;
     public ConcurrentLinkedQueue<byte[]> messageQueue = new ConcurrentLinkedQueue<>();

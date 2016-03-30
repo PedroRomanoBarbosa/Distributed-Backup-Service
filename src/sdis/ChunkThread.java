@@ -68,7 +68,7 @@ public class ChunkThread extends Thread{
     public void run() {
         try {
             if(active){
-                int time = new Random().nextInt(400);
+                int time = new Random().nextInt(1000);
                 new CheckChunk().start();
                 sleep(time);
                 if (send) {

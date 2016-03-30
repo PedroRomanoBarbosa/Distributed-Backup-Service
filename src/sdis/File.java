@@ -74,6 +74,7 @@ public class File implements Serializable{
         FileInputStream in = new FileInputStream(filePath);
 
         int bytesRead = in.read(buffer);
+        System.out.println("TAMANHO DO CHUNK: " + buffer.length);
 
         while (bytesRead != -1) {
 
@@ -84,6 +85,7 @@ public class File implements Serializable{
 
            // chunks.put(chunksSize, buffer);
             bytesRead = in.read(buffer);
+            System.out.println("TAMANHO DO CHUNK: " + buffer.length);
 
         }
     }

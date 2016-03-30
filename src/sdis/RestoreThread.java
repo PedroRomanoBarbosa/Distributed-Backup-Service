@@ -50,11 +50,13 @@ public class RestoreThread extends MulticastThread{
      */
     public void run(){
         int i = 0;
+        int iter = 0;
         byte[][] chunks = null;
         int numChunks = 0;
         while(active){
             byte[] packet = peer.getMDR().messageQueue.poll();
             if(packet != null){
+                iter++;
                 /**
                  * Get message packet and process the header to check if its
                  * valid and if it is retrieve the body an store into an array
@@ -62,7 +64,7 @@ public class RestoreThread extends MulticastThread{
                 if(restore){
                     splitMessage(packet);
                     String message = new String(header);
-                    System.out.println("[MDR] " + message);
+                    //System.out.println("[MDR] " + message);
                     if(regex.check(message)){
                         if (file == null){
                             file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
@@ -81,7 +83,7 @@ public class RestoreThread extends MulticastThread{
                                 i++;
                             }
                         }
-                        System.out.println("ARRAY:" + chunks.length);
+
                         /**
                          * Create file and reset variables after file restored. The String
                          * array 'chunks' must be different than null for obvious reasons.

@@ -18,9 +18,12 @@ public class MDR extends MulticastThread{
     }
 
     public void run(){
+        int iter = 0;
         while (active){
             try {
-                byte[] packet = peer.getRestoreSocket().receiveData(100000);
+                byte[] packet = peer.getRestoreSocket().receiveData(70000);
+                iter++;
+                System.out.println(iter);
                 messageQueue.offer(packet);
             } catch ( IOException e) {
                 e.printStackTrace();

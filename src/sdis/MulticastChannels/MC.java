@@ -7,10 +7,12 @@ import sdis.Peer;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MC extends Thread {
 
     private Peer peer;
+    public ConcurrentLinkedQueue<byte[]> messageQueue = new ConcurrentLinkedQueue<>();
     private FileStorage fileStorage;
 
     public MC(Peer p, FileStorage fileSt) {
@@ -23,11 +25,12 @@ public class MC extends Thread {
          while (true) {
             try {
                 DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
-                String message = new String(packet.getData(), 0, packet.getLength());
-                new ReceiveThread(packet.getAddress(), message).start();
+                messageQueue.offer(packet.getData());
+                new ReceiveThread(packet.getAddress(), new String(packet.getData(), 0, packet.getLength())).start();
+                messageQueue.poll();
 
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
     }

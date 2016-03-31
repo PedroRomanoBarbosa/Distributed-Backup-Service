@@ -16,7 +16,9 @@ public class ChunkThread extends Thread{
     public int chunkNumber;
     private String message;
     private byte[] packet;
-    public volatile boolean active;
+    private Check check;
+    private boolean valid;
+    private int time;
     public volatile boolean send;
 
     /**
@@ -34,7 +36,7 @@ public class ChunkThread extends Thread{
         send = true;
         java.io.File f = new java.io.File(fileId + java.io.File.separator + chunkNumber);
         if(f.exists()){
-            active = true;
+            valid = true;
             FileInputStream fis;
             try {
                 byte[] content = new byte[(int)f.length()];
@@ -47,15 +49,17 @@ public class ChunkThread extends Thread{
                     System.arraycopy(chunk,0,packet,message.getBytes().length,chunk.length);
 
                 }else {
-                    active = false;
+                    valid = false;
                 }
                 fis.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }else{
-            active = false;
+            valid = false;
         }
+        time = new Random().nextInt(400);
+        check = new Check();
     }
 
     /**
@@ -67,9 +71,8 @@ public class ChunkThread extends Thread{
     @Override
     public void run() {
         try {
-            if(active){
-                int time = new Random().nextInt(1000);
-                CheckChunk check = new CheckChunk();
+            if(valid){
+                int time = new Random().nextInt(400);
                 check.start();
                 sleep(time);
                 if (send) {
@@ -86,13 +89,13 @@ public class ChunkThread extends Thread{
      * Inner class to check for the same CHUNK messages
      * that the main thread will send
      */
-    public class CheckChunk extends Thread{
+    public class Check extends Thread{
         private volatile boolean active;
         private final String pattern = "^(CHUNK)\\s+([0-9]\\.[0-9])\\s+([0-9]+)\\s+(.+?)\\s+([0-9]+)\\s+\r\n\r\n$";
         private Regex regex;
         private byte[] header;
 
-        public CheckChunk(){
+        public Check(){
             active = true;
             regex = new Regex(pattern);
         }

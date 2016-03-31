@@ -59,7 +59,7 @@ public class RestoreThread extends MulticastThread{
                  * Get message packet and process the header to check if its
                  * valid and if it is retrieve the body an store into an array
                  */
-                if(false){
+                if(restore){
                     splitMessage(packet);
                     String message = new String(header);
                     //System.out.println("[MDR] " + message);

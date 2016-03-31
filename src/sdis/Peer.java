@@ -153,7 +153,6 @@ public class Peer {
         //Main loop for serving the client interface
         while (active){
             try {
-                //Receive
                 socket = serverSocket.accept();
                 is = new DataInputStream(socket.getInputStream());
                 os = new DataOutputStream(socket.getOutputStream());
@@ -241,6 +240,10 @@ public class Peer {
 
     public int getMDR_PORT() {
         return MDR_PORT;
+    }
+
+    public MC getMC(){
+        return multicastControl;
     }
 
     public MDR getMDR(){

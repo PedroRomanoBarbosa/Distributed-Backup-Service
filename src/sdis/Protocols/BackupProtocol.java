@@ -43,7 +43,7 @@ public class BackupProtocol {
                     fileToBackup.getReplicationDegree() + " " + "\r\n\r\n";
 
             byte[] fullMessage = new byte[messageHeader.getBytes().length + fileToBackup.getChunks().get(i).length];
-            System.out.println(messageHeader);
+            //System.out.println(messageHeader);
             //System.out.println(new String(fileToBackup.getChunks().get(i)));
 
             //FONTE: http://stackoverflow.com/questions/5368704/appending-a-byte-to-the-end-of-another-byte
@@ -85,7 +85,7 @@ public class BackupProtocol {
 
                     try {
                         peer.getBackupSocket().send(packet);
-                        System.out.println("Chunk number " + chunkNo + " of file " + file.getFileID() + " sent to the network");
+                        //System.out.println("Chunk number " + chunkNo + " of file " + file.getFileID() + " sent to the network");
 
                     } catch (IOException e) {
                         e.printStackTrace();

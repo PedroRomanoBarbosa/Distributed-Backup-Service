@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -23,7 +24,6 @@ public class File implements Serializable{
 
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
-
         //ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
        // nome.get(0).size();
         chunks = new HashMap<Integer, byte[]>();
@@ -76,8 +76,12 @@ public class File implements Serializable{
         int bytesRead = in.read(buffer);
 
         while (bytesRead != -1) {
-
-            chunks.put(chunks.size(), buffer);
+            if(bytesRead < chunkSize){
+                buffer = Arrays.copyOf(buffer,bytesRead);
+                chunks.put(chunks.size(), buffer);
+            }else {
+                chunks.put(chunks.size(), buffer);
+            }
 
             //Cria vetor para graus de replicacao
             peersWithChunk.add(new Vector<>());

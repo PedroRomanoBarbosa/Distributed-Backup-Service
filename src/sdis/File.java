@@ -20,14 +20,15 @@ public class File implements Serializable{
     private int chunksSize;
     private int chunkSize = 64 * 1000;
     private HashMap<Integer, byte[]> chunks;
-    Vector<Vector<InetAddress>> peersWithChunk;
-
+    //Vector<Vector<InetAddress>> peersWithChunk;
+    private HashMap<Integer, Vector<InetAddress>> peersWithChunk;
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
         //ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
        // nome.get(0).size();
         chunks = new HashMap<Integer, byte[]>();
-        peersWithChunk = new Vector<Vector<InetAddress>>();
+        //peersWithChunk = new Vector<Vector<InetAddress>>();
+        peersWithChunk = new HashMap<Integer, Vector<InetAddress>>();
 
         pathFile = filePath;
         replicationDegree = repDegree;
@@ -75,6 +76,8 @@ public class File implements Serializable{
 
         int bytesRead = in.read(buffer);
 
+        int count = 0;
+
         while (bytesRead != -1) {
             if(bytesRead < chunkSize){
                 buffer = Arrays.copyOf(buffer,bytesRead);
@@ -84,15 +87,19 @@ public class File implements Serializable{
             }
 
             //Cria vetor para graus de replicacao
-            peersWithChunk.add(new Vector<>());
+            //peersWithChunk.add(new Vector<>());
+            peersWithChunk.put(count, new Vector<>());
 
            // chunks.put(chunksSize, buffer);
             bytesRead = in.read(buffer);
-
+            count++;
         }
     }
 
     public void addChunkReplication(int chuckNumb, InetAddress address) {
+        if (!peersWithChunk.containsKey(chuckNumb))
+            peersWithChunk.put(chuckNumb, new Vector<>());
+
         if (!peersWithChunk.get(chuckNumb).contains(address))
             peersWithChunk.get(chuckNumb).add(address);
     }

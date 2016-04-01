@@ -93,7 +93,8 @@ public class File implements Serializable{
     }
 
     public void addChunkReplication(int chuckNumb, InetAddress address) {
-        peersWithChunk.get(chuckNumb).add(address);
+        if (!peersWithChunk.get(chuckNumb).contains(address))
+            peersWithChunk.get(chuckNumb).add(address);
     }
 
     public int getChunkReplication(int chuckNumb) {

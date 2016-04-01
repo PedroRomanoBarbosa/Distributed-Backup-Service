@@ -64,6 +64,18 @@ public class MC extends Thread {
                             e.printStackTrace();
                         }
                     }
+
+                    file = fileStorage.getStoredFilesById(message[3]);
+
+                    if (file != null) {
+                        try {
+                            file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(message[2]));
+                            System.out.println(InetAddress.getByName(message[2]) + " STORED chunk " + Integer.parseInt(message[4]) + " of file "+ file.getFileID());
+                        } catch (UnknownHostException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     break;
                 }
 

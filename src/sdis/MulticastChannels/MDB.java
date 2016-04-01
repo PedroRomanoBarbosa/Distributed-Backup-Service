@@ -77,7 +77,7 @@ public class MDB extends Thread {
                                 messag[i + 2] == (byte) '\r' &&
                                 messag[i + 3] == (byte) '\n') {
                             for (int j = 0; j <= i + 3; j++, bytesRemoved++)
-                                System.arraycopy(messag, 0 + 1, messag, 0, messag.length - 1 - 0);
+                                System.arraycopy(messag, 1, messag, 0, messag.length - 1);
                             break;
                         }
                     }
@@ -87,6 +87,7 @@ public class MDB extends Thread {
                     //Se ainda nao tiver recebido nenhum chunk do ficheiro
                     if (file == null) {
                         file = new sdis.File(message[3], Integer.parseInt(message[5]), 0);
+
 
                         file.getChunks().put(Integer.parseInt(message[4]), messag);
                         file.storeChunk(Integer.parseInt(message[4]));

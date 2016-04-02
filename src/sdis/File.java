@@ -54,6 +54,7 @@ public class File implements Serializable{
         chunks = new HashMap<Integer, byte[]>();
         replicationDegree = repDegree;
         id = ident;
+        peersWithChunk = new HashMap<Integer, Vector<InetAddress>>();
     }
 
     //FONTE: http://www.sha1-online.com/sha256-java/

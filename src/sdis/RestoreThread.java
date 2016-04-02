@@ -62,11 +62,10 @@ public class RestoreThread extends MulticastThread{
                 if(restore){
                     splitMessage(packet);
                     String message = new String(header);
-                    //System.out.println("[MDR] " + message);
                     if(regex.check(message)){
                         if (file == null){
                             file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
-                           // numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+                            numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getNoChunks();
                             chunks = new byte[numChunks][];
                         }
                         String[] groups = regex.getGroups(message);

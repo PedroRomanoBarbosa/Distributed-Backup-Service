@@ -29,11 +29,11 @@ public class RestoreProtocol {
         if(peer.getFileStorage().checkBackedUp(filename)){
             String message;
             String fileId = peer.getFileStorage().getBackedUpFilesByPath(filename).getFileID();
-         //   int numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+            int numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getNoChunks();
             String version = "1.0";
             peer.getRestoreThread().setFileId(fileId);
             peer.getRestoreThread().setRestore();
-            /*try {
+            try {
                 for (int i = 0; i < numChunks; i++){
                     message = "GETCHUNK" + " " + version + " " + peer.getID() + " " + fileId + " " + i + " " + "\r\n\r\n";
                     peer.getControlSocket().send(message,peer.getMC_IP(),peer.getMC_PORT());
@@ -42,7 +42,7 @@ public class RestoreProtocol {
                 e.printStackTrace();
                 peer.getRestoreThread().unsetRestore();
                 peer.sendToClient("An error has occurred and the file could not be restored");
-            }*/
+            }
         }else {
             peer.sendToClient("File doesn't exist in the system");
         }

@@ -24,7 +24,7 @@ public class MC extends Thread {
     public void run() {
          while (true) {
             try {
-                DatagramPacket packet = peer.getControlSocket().receivePacket(64000);
+                DatagramPacket packet = peer.getControlSocket().receivePacket(64512);
                 messageQueue.offer(packet.getData());
                 new ReceiveThread(packet.getAddress(), new String(packet.getData(), 0, packet.getLength())).start();
                 messageQueue.poll();

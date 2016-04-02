@@ -176,5 +176,16 @@ public class File implements Serializable{
         }
         return false;
     }
+    
+    public boolean equals(File other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof File))return false;
+
+        if(other.getFileID() == id)
+            return true;
+        else
+            return false;
+    }
 
 }

@@ -24,7 +24,7 @@ public class MDB extends Thread {
         while (true) {
 
             try {
-                DatagramPacket packet = peer.getBackupSocket().receivePacket(64000);
+                DatagramPacket packet = peer.getBackupSocket().receivePacket(64512);
                 byte[] data = Arrays.copyOfRange(packet.getData(),packet.getOffset(),packet.getLength());
                 //String message = new String(packet.getData(), 0, packet.getLength());
 

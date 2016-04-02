@@ -87,6 +87,7 @@ public class File implements Serializable{
             peersWithChunk.add(new Vector<>());
 
            // chunks.put(chunksSize, buffer);
+            buffer = new byte[chunkSize];
             bytesRead = in.read(buffer);
 
         }

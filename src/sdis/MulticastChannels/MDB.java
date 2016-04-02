@@ -89,15 +89,15 @@ public class MDB extends Thread {
                         file = new sdis.File(message[3], Integer.parseInt(message[5]), 0);
 
 
-                        file.getChunks().put(Integer.parseInt(message[4]), messag);
-                        file.storeChunk(Integer.parseInt(message[4]));
+                        //file.getChunks().put(Integer.parseInt(message[4]), messag);
+                        file.storeChunk(Integer.parseInt(message[4]), messag);
                         fileStorage.addStoredFile(file);
                     }
 
                     //Se ja tiver recebido algum chunk do ficheiro apenas adiciona o chunk
                     else {
-                        file.getChunks().put(Integer.parseInt(message[4]), messag);
-                        file.storeChunk(Integer.parseInt(message[4]));
+                       // file.getChunks().put(Integer.parseInt(message[4]), messag);
+                        file.storeChunk(Integer.parseInt(message[4]),messag);
                     }
 
                     //Update dos dados a guardar

@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 
 public class BackupProtocol {
     private int maxReplicationDegree = 9;
@@ -36,19 +37,29 @@ public class BackupProtocol {
         fileStorage.addBackedUpFile(fileToBackup);
         fileStorage.updateDataBase(peer.getID());
 
-        for (int i = 0; i < fileToBackup.getChunks().size(); i++) {
+
+
+        HashMap<Integer, byte[]> chunks = new HashMap<Integer, byte[]>();
+
+        try {
+            chunks = fileToBackup.buildChunks(filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < chunks.size(); i++) {
 
             //TODO Alterar o campo 1.0 para Versao Real
             String messageHeader = "PUTCHUNK " + "1.0" + " " + peer.getID() + " " + fileToBackup.getFileID() + " " + i + " " +
                     fileToBackup.getReplicationDegree() + " " + "\r\n\r\n";
 
-            byte[] fullMessage = new byte[messageHeader.getBytes().length + fileToBackup.getChunks().get(i).length];
+            byte[] fullMessage = new byte[messageHeader.getBytes().length + chunks.get(i).length];
             //System.out.println(messageHeader);
             //System.out.println(new String(fileToBackup.getChunks().get(i)));
 
             //FONTE: http://stackoverflow.com/questions/5368704/appending-a-byte-to-the-end-of-another-byte
             System.arraycopy(messageHeader.getBytes(), 0, fullMessage, 0, messageHeader.getBytes().length);
-            System.arraycopy(fileToBackup.getChunks().get(i), 0, fullMessage, messageHeader.getBytes().length, fileToBackup.getChunks().get(i).length);
+            System.arraycopy(chunks.get(i), 0, fullMessage, messageHeader.getBytes().length, chunks.get(i).length);
             // System.out.println(fullMessage.toString());
             new SendThread(peer, fullMessage, replicationDegree, fileToBackup, i).start();
         }

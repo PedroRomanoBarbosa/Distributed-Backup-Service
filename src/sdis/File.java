@@ -19,14 +19,14 @@ public class File implements Serializable{
     private int replicationDegree;
     private int chunksSize;
     private int chunkSize = 64 * 1000;
-    private HashMap<Integer, byte[]> chunks;
+    //private HashMap<Integer, byte[]> chunks;
     //Vector<Vector<InetAddress>> peersWithChunk;
     private HashMap<Integer, Vector<InetAddress>> peersWithChunk;
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
         //ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
        // nome.get(0).size();
-        chunks = new HashMap<Integer, byte[]>();
+       // chunks = new HashMap<Integer, byte[]>();
         //peersWithChunk = new Vector<Vector<InetAddress>>();
         peersWithChunk = new HashMap<Integer, Vector<InetAddress>>();
 
@@ -41,17 +41,17 @@ public class File implements Serializable{
         String idAux = pathFile + fileName + Long.toString(actualFile.lastModified());
         id = sha256(idAux);
 
-        try {
+       /* try {
             buildChunks(filePath);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
     //Uusado para os ficheiros stored
     public File(String ident, int repDegree, int notUsed) {
-        chunks = new HashMap<Integer, byte[]>();
+        //chunks = new HashMap<Integer, byte[]>();
         replicationDegree = repDegree;
         id = ident;
         peersWithChunk = new HashMap<Integer, Vector<InetAddress>>();
@@ -71,7 +71,9 @@ public class File implements Serializable{
     }
 
     //FONTE: http://stackoverflow.com/questions/9588348/java-read-file-by-chunks
-    private void buildChunks(String filePath) throws IOException {
+    public HashMap<Integer, byte[]> buildChunks(String filePath) throws IOException {
+        HashMap<Integer, byte[]> chunks = new HashMap<Integer, byte[]>();
+
         byte[] buffer = new byte[chunkSize];
         FileInputStream in = new FileInputStream(filePath);
 
@@ -96,6 +98,8 @@ public class File implements Serializable{
             bytesRead = in.read(buffer);
             count++;
         }
+
+        return chunks;
     }
 
     public void addChunkReplication(int chuckNumb, InetAddress address) {
@@ -110,9 +114,9 @@ public class File implements Serializable{
         return peersWithChunk.get(chuckNumb).size();
     }
 
-    public HashMap<Integer, byte[]> getChunks(){
+    /*public HashMap<Integer, byte[]> getChunks(){
         return chunks;
-    }
+    }*/
 
     public int getReplicationDegree() {
         return replicationDegree;
@@ -135,13 +139,13 @@ public class File implements Serializable{
     }
 
 
-    public void storeChunk(int chunkId) {
+    public void storeChunk(int chunkId, byte[] chunk) {
         try {
             String path = System.getProperty("user.dir") + java.io.File.separator + id;
             new java.io.File(path).mkdirs();
 
             FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + chunkId);
-            fos.write(chunks.get(chunkId));
+            fos.write(chunk);
             fos.close();
 
         } catch (Exception e) {

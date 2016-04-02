@@ -66,7 +66,7 @@ public class RestoreThread extends MulticastThread{
                     if(regex.check(message)){
                         if (file == null){
                             file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
-                            numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
+                           // numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getChunks().size();
                             chunks = new byte[numChunks][];
                         }
                         String[] groups = regex.getGroups(message);

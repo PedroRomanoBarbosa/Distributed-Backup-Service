@@ -98,7 +98,6 @@ public class File implements Serializable{
             bytesRead = in.read(buffer);
             count++;
         }
-
         return chunks;
     }
 
@@ -165,6 +164,17 @@ public class File implements Serializable{
         {
             dir.delete();
         }
+    }
+
+    public synchronized boolean decreaseReplicationDegree(int chunkNumber, InetAddress addr){
+        Vector<InetAddress> peersAddr = peersWithChunk.get(chunkNumber);
+        for (int i = 0; i < peersAddr.size(); i++) {
+            if(peersAddr.get(i).equals(addr)){
+                peersAddr.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
 }

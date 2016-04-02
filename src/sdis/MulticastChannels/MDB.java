@@ -91,7 +91,10 @@ public class MDB extends Thread {
 
                         //file.getChunks().put(Integer.parseInt(message[4]), messag);
                         file.storeChunk(Integer.parseInt(message[4]), messag);
-                        fileStorage.addStoredFile(file);
+
+                        if(!fileStorage.getStoredFiles().contains(file)) {
+                            fileStorage.addStoredFile(file);
+                        }
                     }
 
                     //Se ja tiver recebido algum chunk do ficheiro apenas adiciona o chunk

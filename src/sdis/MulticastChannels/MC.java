@@ -81,7 +81,7 @@ public class MC extends Thread {
                     }
 
                     case "DELETE": {
-                            sdis.File file = fileStorage.getStoredFilesById(message[3]);
+                            sdis.File file = fileStorage.getStoredFilesById(message[3].trim());
 
                             if (file != null) {
                                 file.removeChunks();

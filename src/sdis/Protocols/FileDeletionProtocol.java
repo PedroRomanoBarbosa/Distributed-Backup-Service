@@ -16,14 +16,14 @@ public class FileDeletionProtocol {
             return;
 
             //Tenta apagar do sistema de ficheiros
-        try {
+       /* try {
             if(fileStorage.getBackedUpFilesByPath(filename) != null)
                 Files.delete(Paths.get(System.getProperty("user.dir") + java.io.File.separator + filename));
         } catch (NoSuchFileException e) {
             //Ficheiro ja nao existe
         } catch (IOException e) {
             System.out.println("Error while deleting file.");
-        }
+        }*/
 
 
         //Prepara a mensagem para a enviar
@@ -38,20 +38,25 @@ public class FileDeletionProtocol {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            try {
+                Thread.sleep((long) (2000));
+            } catch (InterruptedException e) {
+            }
         }
 
         System.out.println("File " + filename + " deleted.");
 
         //Elimina da "base de dados"
-        fileStorage.getBackedUpFiles().remove(fileStorage.getBackedUpFilesByPath(filename));
-        fileStorage.updateDataBase(peer.getID());
+       /* fileStorage.getBackedUpFiles().remove(fileStorage.getBackedUpFilesByPath(filename));
+        fileStorage.updateDataBase(peer.getID());*/
 }
 
     public void send(Peer peer, byte[] message) {
         DatagramPacket packet = new DatagramPacket(message, message.length, peer.getMC_IP(), peer.getMC_PORT());
 
         try {
-            peer.getBackupSocket().send(packet);
+            peer.getControlSocket().send(packet);
 
         } catch (IOException e) {
             e.printStackTrace();

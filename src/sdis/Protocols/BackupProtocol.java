@@ -34,8 +34,10 @@ public class BackupProtocol {
             e.printStackTrace();
         }
 
-        fileStorage.addBackedUpFile(fileToBackup);
-        fileStorage.updateDataBase(peer.getID());
+        if(!fileStorage.getBackedUpFiles().contains(fileToBackup)) {
+            fileStorage.addBackedUpFile(fileToBackup);
+            fileStorage.updateDataBase(peer.getID());
+        }
 
         HashMap<Integer, byte[]> chunks = new HashMap<Integer, byte[]>();
 

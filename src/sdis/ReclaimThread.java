@@ -1,6 +1,10 @@
 package sdis;
 
 import sdis.Utils.Regex;
+
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -11,14 +15,16 @@ public class ReclaimThread extends Thread {
     private final Peer peer;
     private final String fileId;
     private final int chunkNumber;
+    private final InetAddress senderAddress;
     private final int time;
     private final Check check;
     private volatile boolean send;
 
-    public ReclaimThread(Peer p,String fid,int n){
+    public ReclaimThread(Peer p,String fid,int n,InetAddress addr){
         peer = p;
         fileId = fid;
         chunkNumber = n;
+        senderAddress = addr;
         time = new Random().nextInt(400);
         check = new Check();
         send = true;
@@ -29,14 +35,15 @@ public class ReclaimThread extends Thread {
         try {
             File f = peer.getFileStorage().getBackedUpFilesById(fileId);
             if(f != null){
-                f.setReplicationDegree(f.getChunkReplication(chunkNumber)-1); //TODO Set replication degree of the chunk not the file
-                if(f.getReplicationDegree() < f.getChunkReplication(chunkNumber)){ //TODO Same
-                    check.start();
-                    Thread.sleep(time);
-                    if(send){
-                        //TODO build PUTCHUNK message to send to the network
+                if(f.decreaseReplicationDegree(chunkNumber,senderAddress)){
+                    if(f.getReplicationDegree() < f.getChunkReplication(chunkNumber)){
+                        check.start();
+                        Thread.sleep(time);
+                        if(send){
+                            //TODO build PUTCHUNK message to send to the network
+                        }
+                        check.end();
                     }
-                    check.end();
                 }
             }
         } catch (InterruptedException e) {
@@ -67,15 +74,14 @@ public class ReclaimThread extends Thread {
         @Override
         public void run() {
             while (active){
-                byte[] packet = peer.getMC().messageQueue.peek();
+                DatagramPacket packet = peer.getMC().messageQueue.peek();
                 if(packet != null){
-                    getHeader(packet);
-                    String[] groups = regex.getGroups(new String(header));
-                    if(groups.length != 0){
-                        if(Integer.parseInt(groups[2]) != peer.getID() && groups[0].equals("PUTCHUNK") && groups[1].equals("1.0")){
-                            if(groups[3].equals(fileId) && Integer.parseInt(groups[4]) == chunkNumber){
-                                send = false;
-                            }
+                    byte[] data = Arrays.copyOfRange(packet.getData(),packet.getOffset(),packet.getLength());
+                    getHeader(data);
+                    String[] g = regex.getGroups(new String(header));
+                    if(g.length != 0){
+                        if(g[0].equals("PUTCHUNK") && g[3].equals(fileId) && Integer.parseInt(g[4]) == chunkNumber){
+                            send = false;
                         }
                     }
                 }

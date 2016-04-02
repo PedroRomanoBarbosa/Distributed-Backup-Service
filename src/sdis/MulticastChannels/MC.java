@@ -3,6 +3,7 @@ package sdis.MulticastChannels;
 import sdis.ChunkThread;
 import sdis.FileStorage;
 import sdis.Peer;
+import sdis.ReclaimThread;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MC extends Thread {
 
     private Peer peer;
-    public ConcurrentLinkedQueue<byte[]> messageQueue = new ConcurrentLinkedQueue<>();
+    public ConcurrentLinkedQueue<DatagramPacket> messageQueue = new ConcurrentLinkedQueue<>();
     private FileStorage fileStorage;
 
     public MC(Peer p, FileStorage fileSt) {
@@ -25,10 +26,9 @@ public class MC extends Thread {
          while (true) {
             try {
                 DatagramPacket packet = peer.getControlSocket().receivePacket(64512);
-                messageQueue.offer(packet.getData());
+                messageQueue.offer(packet);
                 new ReceiveThread(packet.getAddress(), new String(packet.getData(), 0, packet.getLength())).start();
                 messageQueue.poll();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -98,7 +98,7 @@ public class MC extends Thread {
                     }
 
                     case "REMOVED": {
-                            new ChunkThread(peer, message[3], Integer.parseInt(message[4])).start();
+                            new ReclaimThread(peer, message[3], Integer.parseInt(message[4]), address).start();
                         break;
                     }
 

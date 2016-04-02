@@ -138,6 +138,10 @@ public class File implements Serializable{
         return pathFile;
     }
 
+    public int getNoChunks() {
+        return peersWithChunk.size();
+    }
+
 
     public void storeChunk(int chunkId, byte[] chunk) {
         try {

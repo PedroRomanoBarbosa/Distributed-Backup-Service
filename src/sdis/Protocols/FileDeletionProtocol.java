@@ -12,9 +12,13 @@ public class FileDeletionProtocol {
 
     public FileDeletionProtocol(Peer peer, FileStorage fileStorage, String filename) {
 
-        //Tenta apagar do sistema de ficheiros
+        if(fileStorage.getBackedUpFilesByPath(filename) == null)
+            return;
+
+            //Tenta apagar do sistema de ficheiros
         try {
-            Files.delete(Paths.get(fileStorage.getBackedUpFilesByPath(filename).getPathFile()));
+            if(fileStorage.getBackedUpFilesByPath(filename) != null)
+                Files.delete(Paths.get(System.getProperty("user.dir") + java.io.File.separator + filename));
         } catch (NoSuchFileException e) {
             //Ficheiro ja nao existe
         } catch (IOException e) {
@@ -25,7 +29,7 @@ public class FileDeletionProtocol {
         //Prepara a mensagem para a enviar
         //TODO Alterar o campo 1.0 para Versao Real
         String messageHeader = "DELETE " + "1.0" + " " + peer.getID() + " " + fileStorage.getBackedUpFilesByPath(filename).getFileID() + "\r\n\r\n";
-        System.out.println(messageHeader);
+        System.out.println("\n" + messageHeader);
 
         for (int i = 0; i < 3; i++) {
             try {
@@ -36,7 +40,7 @@ public class FileDeletionProtocol {
             }
         }
 
-        System.out.println("File " + fileStorage.getBackedUpFilesByPath(filename) + " deleted.");
+        System.out.println("File " + filename + " deleted.");
 
         //Elimina da "base de dados"
         fileStorage.getBackedUpFiles().remove(fileStorage.getBackedUpFilesByPath(filename));

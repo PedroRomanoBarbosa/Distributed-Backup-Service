@@ -186,7 +186,7 @@ public class Peer {
                                 sendToClient("DELETE successful");
                                 break;
                             case "RECLAIM":
-                                new ReclaimProtocol(this,Long.parseLong(groups[2])).reclaimSpace();
+                                new ReclaimProtocol(this,Long.parseLong(groups[1],10)).reclaimSpace();
                                 sendToClient("Space reclaiming successful");
                                 break;
                             default:

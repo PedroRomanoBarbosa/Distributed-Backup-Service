@@ -7,7 +7,6 @@ import sdis.Peer;
 import java.io.IOException;
 import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.Vector;
 
 public class ReclaimProtocol {
     private long size;
@@ -43,14 +42,14 @@ public class ReclaimProtocol {
                     try {
                         String message = "REMOVED " + version + " " + peer.getID() +  " " + c.fileId + " " + c.chunkNumber + " \r\n\r\n";
                         peer.getBackupSocket().sendPacket(message.getBytes(),peer.getMC_IP(),peer.getMC_PORT());
-                        acc += file.getTotalSpace();
-                        System.out.println(filename + " Was deleted! SIZE: " + file.getTotalSpace());
+                        System.out.println(filename + " Was deleted! SIZE: " + file.length());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }else{
                     System.out.println("Delete operation failed for " + filename);
                 }
+                acc += file.length();
             }
         }
         priorityQueue.clear();
@@ -60,8 +59,6 @@ public class ReclaimProtocol {
         for (File f: peer.getFileStorage().getStoredFiles()) {
             for (Integer i : f.getPeersWithChunk().keySet()) {
                 Chunk p = new Chunk(f.getFileID(),i,f.getChunkReplication(i));
-                System.out.println("FileId: " + f.getFileID());
-                System.out.println("Chunk number: " + i + " Degree: " + f.getChunkReplication(i));
                 priorityQueue.add(p);
             }
         }

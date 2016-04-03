@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 public class MDB extends Thread {
@@ -47,10 +48,12 @@ public class MDB extends Thread {
                 messageDealer(address, messag);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
             }
         }
 
-        private void messageDealer(InetAddress address, byte[] messag) throws UnsupportedEncodingException {
+        private void messageDealer(InetAddress address, byte[] messag) throws UnsupportedEncodingException, UnknownHostException {
             String message[] = new String(messag, "UTF-8").split(" ");
 
             if (Integer.parseInt(message[2]) != peer.getID()) {
@@ -80,6 +83,8 @@ public class MDB extends Thread {
                             //file.getChunks().put(Integer.parseInt(message[4]), messag);
                             file.storeChunk(Integer.parseInt(message[4]), messag);
 
+                            file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(Integer.toString(peer.getID())));
+
                             if (!fileStorage.getStoredFiles().contains(file)) {
                                 fileStorage.addStoredFile(file);
                             }
@@ -89,6 +94,7 @@ public class MDB extends Thread {
                         else {
                             // file.getChunks().put(Integer.parseInt(message[4]), messag);
                             file.storeChunk(Integer.parseInt(message[4]), messag);
+                            file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(Integer.toString(peer.getID())));
                         }
 
                         //Update dos dados a guardar

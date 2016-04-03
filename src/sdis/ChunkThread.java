@@ -41,15 +41,19 @@ public class ChunkThread extends Thread{
             try {
                 byte[] content = new byte[(int)f.length()];
                 fis = new FileInputStream(f);
-                if(fis.read(content,0,content.length) != -1){
-                    chunk = content;
-                    message = "CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n";
-                    packet = new byte[message.getBytes().length + chunk.length];
-                    System.arraycopy(message.getBytes(),0,packet,0,message.getBytes().length);
-                    System.arraycopy(chunk,0,packet,message.getBytes().length,chunk.length);
+                if(content.length != 0){
+                    if(fis.read(content,0,content.length) != -1){
+                        chunk = content;
+                        message = "CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n";
+                        packet = new byte[message.getBytes().length + chunk.length];
+                        System.arraycopy(message.getBytes(),0,packet,0,message.getBytes().length);
+                        System.arraycopy(chunk,0,packet,message.getBytes().length,chunk.length);
 
+                    }else {
+                        valid = false;
+                    }
                 }else {
-                    valid = false;
+                    packet = ("CHUNK " + "1.0" + " " + peer.getID() + " " + fileId + " " + chunkNumber + " \r\n\r\n").getBytes();
                 }
                 fis.close();
             } catch (IOException e) {

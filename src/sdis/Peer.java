@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 public class Peer {
     //Constants
@@ -35,6 +36,7 @@ public class Peer {
     private RestoreThread restoreThread;
     private ServerSocket serverSocket;
     private FileStorage fileStorage;
+    private byte[] header,body;
 
     public Peer(int id, String mcIp, int mcPort, String mdbIp, int mdbPort, String mdrIp, int mdrPort, FileStorage fileStor){
         fileStorage = fileStor;
@@ -145,7 +147,7 @@ public class Peer {
         }
     }
 
-    public void start(){
+    public void start() {
         mdr.start();
         restoreThread.start();
         multicastControl.start();

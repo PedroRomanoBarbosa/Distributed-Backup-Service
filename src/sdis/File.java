@@ -157,14 +157,17 @@ public class File implements Serializable {
 
     }
 
+    //http://stackoverflow.com/questions/20281835/how-to-delete-a-folder-with-files-using-java
     public void removeChunks() {
-        java.io.File dir = new java.io.File(id);
-
-        if (dir.isDirectory())
-        {
-            dir.delete();
+        java.io.File index = new java.io.File(System.getProperty("user.dir") + java.io.File.separator + id);
+        String[]entries = index.list();
+        for(String s: entries){
+            java.io.File currentFile = new java.io.File(index.getPath(),s);
+            currentFile.delete();
         }
+        index.delete();
     }
+
 
     public synchronized boolean decreaseReplicationDegree(int chunkNumber, InetAddress addr){
         Vector<InetAddress> peersAddr = peersWithChunk.get(chunkNumber);

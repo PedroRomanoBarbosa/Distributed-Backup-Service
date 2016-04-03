@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Vector;
 
 public class BackupProtocol {
     private int maxReplicationDegree = 9;
@@ -47,6 +48,8 @@ public class BackupProtocol {
             e.printStackTrace();
         }
 
+        int lastSize = 0;
+
         for (int i = 0; i < chunks.size(); i++) {
 
             //TODO Alterar o campo 1.0 para Versao Real
@@ -61,8 +64,17 @@ public class BackupProtocol {
             System.arraycopy(messageHeader.getBytes(), 0, fullMessage, 0, messageHeader.getBytes().length);
             System.arraycopy(chunks.get(i), 0, fullMessage, messageHeader.getBytes().length, chunks.get(i).length);
             // System.out.println(fullMessage.toString());
+            lastSize = chunks.get(i).length;
             new SendThread(peer, fullMessage, replicationDegree, fileToBackup, i).start();
         }
+
+        if (lastSize == 64000) {
+            String messageHeader = "PUTCHUNK " + "1.0" + " " + peer.getID() + " " + fileToBackup.getFileID() + " " + chunks.size() + " " +
+                    fileToBackup.getReplicationDegree() + " " + "\r\n\r\n";
+            fileToBackup.getPeersWithChunk().put(chunks.size(), new Vector<>());
+            new SendThread(peer, messageHeader.getBytes(), replicationDegree, fileToBackup, chunks.size()).start();
+        }
+
 
         System.out.println("File " + filename + " sent to the network!\n");
     }

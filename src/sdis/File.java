@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
-public class File implements Serializable{
+public class File implements Serializable {
     private java.io.File actualFile;
     private String id;
     private String pathFile;
@@ -176,13 +176,16 @@ public class File implements Serializable{
         }
         return false;
     }
-    
-    public boolean equals(File other){
+
+    @Override
+    public boolean equals(Object other){
         if (other == null) return false;
         if (other == this) return true;
         if (!(other instanceof File))return false;
 
-        if(other.getFileID() == id)
+        File otherMyClass = (File)other;
+
+        if(otherMyClass.getFileID().equals(id))
             return true;
         else
             return false;

@@ -7,6 +7,7 @@ import sdis.Peer;
 import java.io.IOException;
 import java.util.PriorityQueue;
 import java.util.Random;
+import java.util.Vector;
 
 public class ReclaimProtocol {
     private long size;
@@ -57,7 +58,7 @@ public class ReclaimProtocol {
 
     private void fileTreeToPriorityQueue(){
         for (File f: peer.getFileStorage().getStoredFiles()) {
-            for (int i = 0; i < f.getNoChunks(); i++){
+            for (Integer i : f.getPeersWithChunk().keySet()) {
                 Chunk p = new Chunk(f.getFileID(),i,f.getChunkReplication(i));
                 System.out.println("FileId: " + f.getFileID());
                 System.out.println("Chunk number: " + i + " Degree: " + f.getChunkReplication(i));

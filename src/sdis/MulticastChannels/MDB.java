@@ -22,22 +22,18 @@ public class MDB extends Thread {
     @Override
     public void run() {
         while (true) {
-
             try {
                 DatagramPacket packet = peer.getBackupSocket().receivePacket(64512);
                 byte[] data = Arrays.copyOfRange(packet.getData(),packet.getOffset(),packet.getLength());
                 //String message = new String(packet.getData(), 0, packet.getLength());
-
                 new ReceiveThread(packet.getAddress(), data).start();
-
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
     }
 
     public class ReceiveThread extends Thread {
-
         InetAddress address;
         byte[] messag;
 
@@ -62,7 +58,6 @@ public class MDB extends Thread {
                     case "PUTCHUNK": {
                         sdis.File file = fileStorage.getStoredFilesById(message[3]);
 
-
                         //http://stackoverflow.com/questions/642897/removing-an-element-from-an-array-java
                         int bytesRemoved = 0;
                         for (int i = 0; i < messag.length; i++) {
@@ -81,7 +76,6 @@ public class MDB extends Thread {
                         //Se ainda nao tiver recebido nenhum chunk do ficheiro
                         if (file == null) {
                             file = new sdis.File(message[3], Integer.parseInt(message[5]), 0);
-
 
                             //file.getChunks().put(Integer.parseInt(message[4]), messag);
                             file.storeChunk(Integer.parseInt(message[4]), messag);

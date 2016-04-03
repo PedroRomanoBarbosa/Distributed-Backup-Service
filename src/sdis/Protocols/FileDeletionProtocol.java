@@ -16,7 +16,8 @@ public class FileDeletionProtocol {
             return;
 
             //Tenta apagar do sistema de ficheiros
-       /* try {
+        /*
+        try {
             if(fileStorage.getBackedUpFilesByPath(filename) != null)
                 Files.delete(Paths.get(System.getProperty("user.dir") + java.io.File.separator + filename));
         } catch (NoSuchFileException e) {
@@ -48,7 +49,8 @@ public class FileDeletionProtocol {
         System.out.println("File " + filename + " deleted.");
 
         //Elimina da "base de dados"
-       /* fileStorage.getBackedUpFiles().remove(fileStorage.getBackedUpFilesByPath(filename));
+        /*
+        fileStorage.getBackedUpFiles().remove(fileStorage.getBackedUpFilesByPath(filename));
         fileStorage.updateDataBase(peer.getID());*/
 }
 

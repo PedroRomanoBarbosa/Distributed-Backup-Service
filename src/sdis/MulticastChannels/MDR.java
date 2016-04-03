@@ -23,24 +23,10 @@ public class MDR extends Thread{
         while (active){
             try {
                 byte[] packet = restoreSocket.receiveData(64512);
-                new QueueThread(packet).start();
+                messageQueue.offer(packet);
             } catch ( IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public class QueueThread extends Thread{
-        private byte[] packet;
-
-        public QueueThread(byte[] p){
-            packet = p;
-        }
-
-        @Override
-        public void run() {
-            messageQueue.offer(packet);
-            System.out.println("THREAD!");
         }
     }
 }

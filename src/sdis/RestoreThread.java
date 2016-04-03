@@ -55,7 +55,7 @@ public class RestoreThread extends MulticastThread{
         while(active){
             byte[] packet = peer.getMDR().messageQueue.poll();
             if(packet != null){
-                /**
+                /*
                  * Get message packet and process the header to check if its
                  * valid and if it is retrieve the body an store into an array
                  */
@@ -81,7 +81,7 @@ public class RestoreThread extends MulticastThread{
                             }
                         }
 
-                        /**
+                        /*
                          * Create file and reset variables after file restored. The String
                          * array 'chunks' must be different than null for obvious reasons.
                          * After this block runs, a message is sent to the client telling

@@ -174,6 +174,7 @@ public class Peer {
                                 filename = groups[1];
                                 degree = Integer.parseInt(groups[3]);
                                 new BackupProtocol(this, fileStorage, filename, degree);
+                                sendToClient("BACKUP successful");
                                 break;
                             case "RESTORE":
                                 filename = groups[1];
@@ -182,6 +183,7 @@ public class Peer {
                             case "DELETE":
                                 filename = groups[1];
                                 new FileDeletionProtocol(this, fileStorage, filename);
+                                sendToClient("DELETE successful");
                                 break;
                             case "RECLAIM":
                                 new ReclaimProtocol(this,Long.parseLong(groups[2])).reclaimSpace();

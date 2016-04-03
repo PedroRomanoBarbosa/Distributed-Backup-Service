@@ -16,7 +16,7 @@ public class FileDeletionProtocol {
             return;
 
             //Tenta apagar do sistema de ficheiros
-        
+
         try {
             if(fileStorage.getBackedUpFilesByPath(filename) != null)
                 Files.delete(Paths.get(System.getProperty("user.dir") + java.io.File.separator + filename));

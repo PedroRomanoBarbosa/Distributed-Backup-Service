@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 public class FileStorage implements Serializable {
 
@@ -34,8 +35,9 @@ public class FileStorage implements Serializable {
     public void reloadSize() {
         actualSize = 0;
         for (File file : storedFiles){
-            for (int i = 0; file.getChunksSize().containsKey(i); i++)
-                actualSize =+ file.getChunksSize().get(i);
+            for (Map.Entry<Integer, Integer> entry : file.getChunksSize().entrySet()) {
+                actualSize =+ entry.getValue();
+            }
         }
     }
 

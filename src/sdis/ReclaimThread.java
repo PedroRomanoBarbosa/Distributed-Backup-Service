@@ -55,6 +55,7 @@ public class ReclaimThread extends Thread {
                     if(file.exists()){
                         fis = new FileInputStream(file);
                         if(f.decreaseReplicationDegree(chunkNumber,senderAddress)){
+                            peer.getFileStorage().updateDataBase(peer.getID());
                             System.out.println("CHUNK degree: " + f.getChunkReplication(chunkNumber) + "FILE: " + f.getReplicationDegree());
                             /**
                              * If the current chunk replication degree is smaller than the minimal
@@ -81,6 +82,7 @@ public class ReclaimThread extends Thread {
                                         System.arraycopy(header,0,data,0,header.length);
                                         System.arraycopy(body,0,data,header.length,body.length);
                                         peer.getBackupSocket().sendPacket(data,peer.getMDB_IP(),peer.getMDB_PORT());
+                                        System.out.println("!!!!!PUTCHUNK!!!!!");
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }

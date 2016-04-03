@@ -75,8 +75,10 @@ public class MDB extends Thread {
                 switch (message[0]) {
                     case "PUTCHUNK": {
                         System.out.println("PUTCHUNK");
-                        if(!checkIgnoredChunk(message[3] + "/" + message[4])){
+                        if (!checkIgnoredChunk(message[3] + "/" + message[4])) {
                             sdis.File file = fileStorage.getStoredFilesById(message[3]);
+
+                            //http://stackoverflow.com/questions/642897/removing-an-element-from-an-array-java
                             int bytesRemoved = 0;
                             for (int i = 0; i < messag.length; i++) {
                                 if (messag[i] == (byte) '\r' &&
@@ -90,6 +92,9 @@ public class MDB extends Thread {
                             }
                             messag = Arrays.copyOf(messag, messag.length - bytesRemoved);
 
+                            if (!fileStorage.verifyCapacity(messag.length))
+                                return;
+
                             //Se ainda nao tiver recebido nenhum chunk do ficheiro
                             if (file == null) {
                                 file = new sdis.File(message[3], Integer.parseInt(message[5]), 0);
@@ -98,6 +103,7 @@ public class MDB extends Thread {
                                 file.storeChunk(Integer.parseInt(message[4]), messag);
 
                                 file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(Integer.toString(peer.getID())));
+                                file.setChunkSize(Integer.parseInt(message[4]), messag.length);
 
                                 if (!fileStorage.getStoredFiles().contains(file)) {
                                     fileStorage.addStoredFile(file);
@@ -109,6 +115,7 @@ public class MDB extends Thread {
                                 // file.getChunks().put(Integer.parseInt(message[4]), messag);
                                 file.storeChunk(Integer.parseInt(message[4]), messag);
                                 file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(Integer.toString(peer.getID())));
+                                file.setChunkSize(Integer.parseInt(message[4]), messag.length);
                             }
 
                             //Update dos dados a guardar
@@ -137,6 +144,7 @@ public class MDB extends Thread {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+
                         }
                     }
 

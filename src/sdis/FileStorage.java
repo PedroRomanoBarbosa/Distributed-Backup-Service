@@ -5,17 +5,38 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
-
 public class FileStorage implements Serializable {
 
     private List<File> storedFiles = null;
     private List<File> backedUpFiles = null;
     private String path = null;
+    private final int maxSize = 2000000000; //2GB
+    private int actualSize;
 
     public FileStorage(String p) {
         path = p;
         storedFiles = new Vector<File>();
         backedUpFiles = new Vector<File>();
+        actualSize = 0;
+    }
+
+    public boolean verifyCapacity(int newChunkSize) {
+        int temp = actualSize + newChunkSize;
+
+        if (temp <= maxSize) {
+            actualSize = temp;
+            return true;
+        }
+
+        return false;
+    }
+
+    public void reloadSize() {
+        actualSize = 0;
+        for (File file : storedFiles){
+            for (int i = 0; file.getChunksSize().containsKey(i); i++)
+                actualSize =+ file.getChunksSize().get(i);
+        }
     }
 
     public synchronized void addBackedUpFile(File file) {

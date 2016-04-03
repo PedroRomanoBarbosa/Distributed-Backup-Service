@@ -65,7 +65,7 @@ public class RestoreThread extends MulticastThread{
                     if(regex.check(message)){
                         if (file == null){
                             file = new File(peer.getFileStorage().getBackedUpFilesById(fileId).getPathFile());
-                            numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getNoChunks();
+                            numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).numChunks;
                             chunks = new byte[numChunks][];
                         }
                         String[] groups = regex.getGroups(message);
@@ -80,7 +80,6 @@ public class RestoreThread extends MulticastThread{
                                 i++;
                             }
                         }
-
                         /*
                          * Create file and reset variables after file restored. The String
                          * array 'chunks' must be different than null for obvious reasons.
@@ -93,7 +92,8 @@ public class RestoreThread extends MulticastThread{
                             try {
                                 FileOutputStream fos = new FileOutputStream(file);
                                 for (byte[] chunk : chunks) {
-                                    fos.write(chunk,0,chunk.length);
+                                    if(chunk.length != 0)
+                                        fos.write(chunk,0,chunk.length);
                                 }
                                 fos.close();
                                 if(file.createNewFile()){
@@ -105,7 +105,6 @@ public class RestoreThread extends MulticastThread{
                                 e.printStackTrace();
                                 peer.sendToClient("An error has occurred and file couldn't be restored");
                             }
-
                             restore = false;
                             i = 0;
                             file = null;
@@ -149,7 +148,13 @@ public class RestoreThread extends MulticastThread{
                     m[i+3] == (byte)'\n'
                     ){
                 header = Arrays.copyOf(m,i+3+1);
-                body = Arrays.copyOfRange(m,i+4,m.length);
+                if(m.length == i+4){
+                    body = new byte[0];
+                }
+                else{
+                    body = Arrays.copyOfRange(m,i+4,m.length);
+                }
+                break;
             }
         }
     }

@@ -17,6 +17,7 @@ public class File implements Serializable {
     private String pathFile;
     private String fileName;
     private int replicationDegree;
+    public int numChunks;
     private int chunkSize = 64 * 1000;
     private HashMap<Integer, Vector<InetAddress>> peersWithChunk;
 
@@ -28,6 +29,12 @@ public class File implements Serializable {
 
         //CRIAR O CAMPO ID COM SHA256
         actualFile = new java.io.File(pathFile);
+        System.out.println(actualFile.length());
+        numChunks = (int)(actualFile.length()/64000);
+        if((int)(actualFile.length()%64000) != 0){
+            numChunks++;
+        }
+        System.out.println(numChunks);
         fileName = actualFile.getName();
         String idAux = pathFile + fileName + Long.toString(actualFile.lastModified());
         id = sha256(idAux);

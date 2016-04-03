@@ -11,7 +11,6 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MC extends Thread {
-
     private Peer peer;
     public ConcurrentLinkedQueue<DatagramPacket> messageQueue = new ConcurrentLinkedQueue<>();
     private FileStorage fileStorage;
@@ -36,7 +35,6 @@ public class MC extends Thread {
     }
 
     public class ReceiveThread extends Thread {
-
         InetAddress address;
         String messag;
 
@@ -51,12 +49,10 @@ public class MC extends Thread {
 
         private void messageDealer(InetAddress address, String messag) {
             String message[] = messag.split(" ");
-
             if (Integer.parseInt(message[2]) != peer.getID()) {
                 switch (message[0]) {
                     case "STORED": {
                         sdis.File file = fileStorage.getBackedUpFilesById(message[3]);
-
                         if (file != null) {
                             try {
                                 file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(message[2]));
@@ -67,7 +63,6 @@ public class MC extends Thread {
                         }
 
                         file = fileStorage.getStoredFilesById(message[3]);
-
                         if (file != null) {
                             try {
                                 file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(message[2]));
@@ -76,32 +71,25 @@ public class MC extends Thread {
                                 e.printStackTrace();
                             }
                         }
-
                         break;
                     }
-
                     case "DELETE": {
-                            sdis.File file = fileStorage.getStoredFilesById(message[3]);
-
-                            if (file != null) {
-                                file.removeChunks();
-                                fileStorage.getStoredFiles().remove(file);
-                                System.out.println("DELETED file " + file.getFileID());
-                            }
-
-                            break;
+                        sdis.File file = fileStorage.getStoredFilesById(message[3]);
+                        if (file != null) {
+                            file.removeChunks();
+                            fileStorage.getStoredFiles().remove(file);
+                            System.out.println("DELETED file " + file.getFileID());
+                        }
+                        break;
                     }
-
                     case "GETCHUNK": {
-                            new ChunkThread(peer, message[3], Integer.parseInt(message[4])).start();
+                        new ChunkThread(peer, message[3], Integer.parseInt(message[4])).start();
                         break;
                     }
-
                     case "REMOVED": {
-                            new ReclaimThread(peer, message[3], Integer.parseInt(message[4]), address).start();
+                        new ReclaimThread(peer, message[3], Integer.parseInt(message[4]), address).start();
                         break;
                     }
-
                     default:
                         break;
                 }

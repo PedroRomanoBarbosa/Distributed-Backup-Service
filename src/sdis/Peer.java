@@ -5,6 +5,7 @@ import sdis.MulticastChannels.MDB;
 import sdis.MulticastChannels.MDR;
 import sdis.Protocols.BackupProtocol;
 import sdis.Protocols.FileDeletionProtocol;
+import sdis.Protocols.ReclaimProtocol;
 import sdis.Protocols.RestoreProtocol;
 import sdis.Utils.Regex;
 
@@ -183,7 +184,8 @@ public class Peer {
                                 new FileDeletionProtocol(this, fileStorage, filename);
                                 break;
                             case "RECLAIM":
-                                //TODO
+                                new ReclaimProtocol(this,Long.parseLong(groups[2])).reclaimSpace();
+                                sendToClient("Space reclaiming successful");
                                 break;
                             default:
                                 System.out.println("Invalid protocol!");

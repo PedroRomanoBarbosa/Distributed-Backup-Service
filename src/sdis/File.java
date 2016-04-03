@@ -17,23 +17,14 @@ public class File implements Serializable {
     private String pathFile;
     private String fileName;
     private int replicationDegree;
-    private int chunksSize;
     private int chunkSize = 64 * 1000;
-    //private HashMap<Integer, byte[]> chunks;
-    //Vector<Vector<InetAddress>> peersWithChunk;
     private HashMap<Integer, Vector<InetAddress>> peersWithChunk;
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
-        //ArrayList<ArrayList<InetAddress>> nome = new ArrayList<ArrayList<InetAddress>>();
-       // nome.get(0).size();
-       // chunks = new HashMap<Integer, byte[]>();
-        //peersWithChunk = new Vector<Vector<InetAddress>>();
         peersWithChunk = new HashMap<Integer, Vector<InetAddress>>();
 
         pathFile = filePath;
         replicationDegree = repDegree;
-
-        chunksSize = (int) Math.ceil((new java.io.File(filePath).length() / (double) chunkSize));
 
         //CRIAR O CAMPO ID COM SHA256
         actualFile = new java.io.File(pathFile);
@@ -90,10 +81,8 @@ public class File implements Serializable {
             }
 
             //Cria vetor para graus de replicacao
-            //peersWithChunk.add(new Vector<>());
             peersWithChunk.put(count, new Vector<>());
 
-           // chunks.put(chunksSize, buffer);
             buffer = new byte[chunkSize];
             bytesRead = in.read(buffer);
             count++;
@@ -101,7 +90,7 @@ public class File implements Serializable {
         return chunks;
     }
 
-    public void addChunkReplication(int chuckNumb, InetAddress address) {
+    public synchronized void addChunkReplication(int chuckNumb, InetAddress address) {
         if (!peersWithChunk.containsKey(chuckNumb))
             peersWithChunk.put(chuckNumb, new Vector<>());
 
@@ -113,20 +102,8 @@ public class File implements Serializable {
         return peersWithChunk.get(chuckNumb).size();
     }
 
-    /*public HashMap<Integer, byte[]> getChunks(){
-        return chunks;
-    }*/
-
     public int getReplicationDegree() {
         return replicationDegree;
-    }
-
-    public void setReplicationDegree(int repD) {
-        replicationDegree = repD;
-    }
-
-    public int getChunksSize() {
-        return chunksSize;
     }
 
     public String getFileID() {
@@ -137,12 +114,12 @@ public class File implements Serializable {
         return pathFile;
     }
 
-    public int getNoChunks() {
+    public synchronized int getNoChunks() {
         return peersWithChunk.size();
     }
 
 
-    public void storeChunk(int chunkId, byte[] chunk) {
+    public synchronized void storeChunk(int chunkId, byte[] chunk) {
         try {
             String path = System.getProperty("user.dir") + java.io.File.separator + id;
             new java.io.File(path).mkdirs();
@@ -158,7 +135,7 @@ public class File implements Serializable {
     }
 
     //http://stackoverflow.com/questions/20281835/how-to-delete-a-folder-with-files-using-java
-    public void removeChunks() {
+    public synchronized void removeChunks() {
         java.io.File index = new java.io.File(System.getProperty("user.dir") + java.io.File.separator + id);
         String[]entries = index.list();
         for(String s: entries){

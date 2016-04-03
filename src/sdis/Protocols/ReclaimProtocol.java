@@ -37,19 +37,20 @@ public class ReclaimProtocol {
             Chunk c = priorityQueue.poll();
             String filename = c.fileId + java.io.File.separator + c.chunkNumber;
             java.io.File file = new java.io.File(filename);
+            long fileSize = file.length();
             if(file.exists()){
+                System.out.println(filename + " Was deleted! SIZE: " + file.length());
                 if(file.delete()){
                     try {
                         String message = "REMOVED " + version + " " + peer.getID() +  " " + c.fileId + " " + c.chunkNumber + " \r\n\r\n";
                         peer.getBackupSocket().sendPacket(message.getBytes(),peer.getMC_IP(),peer.getMC_PORT());
-                        System.out.println(filename + " Was deleted! SIZE: " + file.length());
+                        acc += fileSize;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }else{
                     System.out.println("Delete operation failed for " + filename);
                 }
-                acc += file.length();
             }
         }
         priorityQueue.clear();

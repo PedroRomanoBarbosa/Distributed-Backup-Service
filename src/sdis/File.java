@@ -118,6 +118,10 @@ public class File implements Serializable {
         return peersWithChunk.size();
     }
 
+    public synchronized HashMap<Integer,Vector<InetAddress>> getPeersWithChunk(){
+        return peersWithChunk;
+    }
+
 
     public synchronized void storeChunk(int chunkId, byte[] chunk) {
         try {
@@ -125,6 +129,7 @@ public class File implements Serializable {
             new java.io.File(path).mkdirs();
 
             FileOutputStream fos = new FileOutputStream(path + java.io.File.separator + chunkId);
+            peersWithChunk.put(chunkId, new Vector<>());
             fos.write(chunk);
             fos.close();
 

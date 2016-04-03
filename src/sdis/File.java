@@ -29,12 +29,10 @@ public class File implements Serializable {
 
         //CRIAR O CAMPO ID COM SHA256
         actualFile = new java.io.File(pathFile);
-        System.out.println(actualFile.length());
         numChunks = (int)(actualFile.length()/64000);
         if((int)(actualFile.length()%64000) != 0){
             numChunks++;
         }
-        System.out.println(numChunks);
         fileName = actualFile.getName();
         String idAux = pathFile + fileName + Long.toString(actualFile.lastModified());
         id = sha256(idAux);

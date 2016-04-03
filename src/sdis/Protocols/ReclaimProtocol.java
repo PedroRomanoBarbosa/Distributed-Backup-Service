@@ -37,6 +37,7 @@ public class ReclaimProtocol {
                 System.out.println(filename + " Was deleted! SIZE: " + file.length());
                 if(file.delete()){
                     try {
+                        peer.getMDB().addIgnoreChunk(c.fileId + "/" + c.chunkNumber);
                         String message = "REMOVED " + version + " " + peer.getID() +  " " + c.fileId + " " + c.chunkNumber + " \r\n\r\n";
                         peer.getControlSocket().sendPacket(message.getBytes(),peer.getMC_IP(),peer.getMC_PORT());
                         acc += fileSize;
@@ -48,7 +49,14 @@ public class ReclaimProtocol {
                 }
             }
         }
+        try {
+            Thread.sleep(2000);
+            peer.getMDB().clearIgnoreChunks();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         priorityQueue.clear();
+        peer.sendToClient("Space reclaiming successful");
     }
 
     private void fileTreeToPriorityQueue(){

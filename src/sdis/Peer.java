@@ -189,7 +189,6 @@ public class Peer {
                                 break;
                             case "RECLAIM":
                                 new ReclaimProtocol(this,Long.parseLong(groups[1],10)).reclaimSpace();
-                                sendToClient("Space reclaiming successful");
                                 break;
                             default:
                                 System.out.println("Invalid protocol!");
@@ -254,6 +253,10 @@ public class Peer {
 
     public MDR getMDR(){
         return  mdr;
+    }
+
+    public MDB getMDB(){
+        return multicastDataBackup;
     }
 
     public FileStorage getFileStorage(){

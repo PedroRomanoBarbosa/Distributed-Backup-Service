@@ -29,7 +29,7 @@ public class RestoreProtocol {
         if(peer.getFileStorage().checkBackedUp(filename)){
             String message;
             String fileId = peer.getFileStorage().getBackedUpFilesByPath(filename).getFileID();
-            int numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).getNoChunks();
+            int numChunks = peer.getFileStorage().getBackedUpFilesById(fileId).numChunks;
             String version = "1.0";
             peer.getRestoreThread().setFileId(fileId);
             peer.getRestoreThread().setRestore();

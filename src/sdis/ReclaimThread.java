@@ -51,41 +51,45 @@ public class ReclaimThread extends Thread {
             if(f != null){
                 FileInputStream fis;
                 try {
-                    fis = new FileInputStream(fileId + java.io.File.separator + Integer.toString(chunkNumber));
-                    if(f.decreaseReplicationDegree(chunkNumber,senderAddress)){
-                        /**
-                         * If the current chunk replication degree is smaller than the minimal
-                         * replication degree it should send a PUTCHUNK message with the same chunk
-                         */
-                        if(f.getChunkReplication(chunkNumber) < f.getReplicationDegree()){
-                            check.start();
-                            Thread.sleep(time);
+                    java.io.File file = new java.io.File(fileId + java.io.File.separator + Integer.toString(chunkNumber));
+                    if(file.exists()){
+                        fis = new FileInputStream(file);
+                        if(f.decreaseReplicationDegree(chunkNumber,senderAddress)){
+                            System.out.println("CHUNK degree: " + f.getChunkReplication(chunkNumber) + "FILE: " + f.getReplicationDegree());
                             /**
-                             * If after the random delay of (0-400)ms the peer doesn't receive
-                             * a PUTCHUNK message with the same fileId and chunkNumber then it will
-                             * send such a message to the network
+                             * If the current chunk replication degree is smaller than the minimal
+                             * replication degree it should send a PUTCHUNK message with the same chunk
                              */
-                            if(send){
-                                try {
-                                    String version = "1.0";
-                                    String message = "PUTCHUNK "+version+" "+peer.getID()+" "+fileId+" "+chunkNumber+" "+f.getReplicationDegree()+" \r\n\r\n";
-                                    byte[] header = message.getBytes();
-                                    byte[] body = new byte[64000];
-                                    int bytesRead = fis.read(body);
-                                    if(bytesRead < 64000)
-                                        body = new byte[bytesRead];
-                                    byte[] data = new byte[header.length + bytesRead];
-                                    System.arraycopy(header,0,data,0,header.length);
-                                    System.arraycopy(body,0,data,header.length,body.length);
-                                    peer.getBackupSocket().sendPacket(data,peer.getMDB_IP(),peer.getMDB_PORT());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                            if(f.getChunkReplication(chunkNumber) < f.getReplicationDegree()){
+                                check.start();
+                                Thread.sleep(time);
+                                /**
+                                 * If after the random delay of (0-400)ms the peer doesn't receive
+                                 * a PUTCHUNK message with the same fileId and chunkNumber then it will
+                                 * send such a message to the network
+                                 */
+                                if(send){
+                                    try {
+                                        String version = "1.0";
+                                        String message = "PUTCHUNK "+version+" "+peer.getID()+" "+fileId+" "+chunkNumber+" "+f.getReplicationDegree()+" \r\n\r\n";
+                                        byte[] header = message.getBytes();
+                                        byte[] body = new byte[64000];
+                                        int bytesRead = fis.read(body);
+                                        if(bytesRead < 64000)
+                                            body = new byte[bytesRead];
+                                        byte[] data = new byte[header.length + bytesRead];
+                                        System.arraycopy(header,0,data,0,header.length);
+                                        System.arraycopy(body,0,data,header.length,body.length);
+                                        peer.getBackupSocket().sendPacket(data,peer.getMDB_IP(),peer.getMDB_PORT());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+                                /**
+                                 * IMPORTANT! End the thread so that there are no memory leaks
+                                 */
+                                check.end();
                             }
-                            /**
-                             * IMPORTANT! End the thread so that there are no memory leaks
-                             */
-                            check.end();
                         }
                     }
                 } catch (FileNotFoundException e) {

@@ -26,30 +26,26 @@ public class ReclaimProtocol {
      * until the wanted size is reached
      */
     public void reclaimSpace(){
-        /* TESTE
-        fillQueue("123");
-        fillQueue("1234");
-        fillQueue("12345");
-        */
         long acc = 0L;
         fileTreeToPriorityQueue();
         while(!priorityQueue.isEmpty() && acc < size) {
             Chunk c = priorityQueue.poll();
             String filename = c.fileId + java.io.File.separator + c.chunkNumber;
             java.io.File file = new java.io.File(filename);
+            long fileSize = file.length();
             if(file.exists()){
+                System.out.println(filename + " Was deleted! SIZE: " + file.length());
                 if(file.delete()){
                     try {
                         String message = "REMOVED " + version + " " + peer.getID() +  " " + c.fileId + " " + c.chunkNumber + " \r\n\r\n";
-                        peer.getBackupSocket().sendPacket(message.getBytes(),peer.getMC_IP(),peer.getMC_PORT());
-                        System.out.println(filename + " Was deleted! SIZE: " + file.length());
+                        peer.getControlSocket().sendPacket(message.getBytes(),peer.getMC_IP(),peer.getMC_PORT());
+                        acc += fileSize;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }else{
                     System.out.println("Delete operation failed for " + filename);
                 }
-                acc += file.length();
             }
         }
         priorityQueue.clear();

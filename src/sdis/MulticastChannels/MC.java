@@ -78,6 +78,7 @@ public class MC extends Thread {
                             if (file != null) {
                                 file.removeChunks();
                                 fileStorage.getStoredFiles().remove(file);
+                                fileStorage.reloadSize();
                                 System.out.println("DELETED file " + file.getFileID());
                             }
                             break;

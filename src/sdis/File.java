@@ -20,6 +20,7 @@ public class File implements Serializable {
     public int numChunks;
     private int chunkSize = 64 * 1000;
     private HashMap<Integer, Vector<InetAddress>> peersWithChunk;
+    private HashMap<Integer, Integer> chunksSize;
 
     public File(String filePath, int repDegree) throws NoSuchAlgorithmException {
         peersWithChunk = new HashMap<Integer, Vector<InetAddress>>();
@@ -51,6 +52,15 @@ public class File implements Serializable {
         replicationDegree = repDegree;
         id = ident;
         peersWithChunk = new HashMap<Integer, Vector<InetAddress>>();
+        chunksSize = new HashMap<Integer, Integer>();
+    }
+
+    public void setChunkSize(int chunkNo, int size) {
+        chunksSize.put(chunkNo, size);
+    }
+
+    public HashMap<Integer, Integer> getChunksSize() {
+        return chunksSize;
     }
 
     //FONTE: http://www.sha1-online.com/sha256-java/

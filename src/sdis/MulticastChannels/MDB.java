@@ -75,6 +75,8 @@ public class MDB extends Thread {
                         }
                         messag = Arrays.copyOf(messag, messag.length - bytesRemoved);
 
+                        if (!fileStorage.verifyCapacity(messag.length))
+                            return;
 
                         //Se ainda nao tiver recebido nenhum chunk do ficheiro
                         if (file == null) {
@@ -84,6 +86,7 @@ public class MDB extends Thread {
                             file.storeChunk(Integer.parseInt(message[4]), messag);
 
                             file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(Integer.toString(peer.getID())));
+                            file.setChunkSize(Integer.parseInt(message[4]), messag.length);
 
                             if (!fileStorage.getStoredFiles().contains(file)) {
                                 fileStorage.addStoredFile(file);
@@ -95,6 +98,7 @@ public class MDB extends Thread {
                             // file.getChunks().put(Integer.parseInt(message[4]), messag);
                             file.storeChunk(Integer.parseInt(message[4]), messag);
                             file.addChunkReplication(Integer.parseInt(message[4]), InetAddress.getByName(Integer.toString(peer.getID())));
+                            file.setChunkSize(Integer.parseInt(message[4]), messag.length);
                         }
 
                         //Update dos dados a guardar

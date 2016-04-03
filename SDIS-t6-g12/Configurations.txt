@@ -1,9 +1,13 @@
-//PEERS
+//Para correr os vários peers basta correr esta linha em cada diretório de cada peer
 java -jar Peer.jar 1234 225.2.3.4 5000 225.3.4.5 5001 225.4.5.6 5002
 java -jar Peer.jar 12345 225.2.3.4 5000 225.3.4.5 5001 225.4.5.6 5002
 java -jar Peer.jar 12346 225.2.3.4 5000 225.3.4.5 5001 225.4.5.6 5002
 
-//INTERFACE
-java -jar Interface.jar 1234 BACKUP lambo.jpg 1 
+//INTERFACE (isto para um peer que esteja na mesma máquina)
+java -jar Interface.jar 1234 BACKUP lambo.jpg 1
 java -jar Interface.jar 1234 BACKUP lambo.jpg 2
 java -jar Interface.jar 1234 RESTORE lambo.jpg
+java -jar Interface.jar 1234 DELETE lambo.jpg
+java -jar Interface.jar 12345 RECLAIM 200000
+java -jar Interface.jar 12345 RECLAIM 100000
+java -jar Interface.jar 12345 RECLAIM 64000

@@ -9,15 +9,29 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class MDB extends Thread {
 
     private Peer peer;
     private FileStorage fileStorage;
+    private HashMap<String,String> ignoreChunks;
 
     public MDB(Peer p, FileStorage fileSt) {
         peer = p;
         fileStorage = fileSt;
+    }
+
+    public synchronized void addIgnoreChunk(String id){
+        ignoreChunks.put(id,id);
+    }
+
+    public synchronized boolean checkIgnoredChunk(String id){
+        ignoreChunks.get(id);
+    }
+
+    public synchronized void clearIgnoreChunks(){
+        ignoreChunks.clear();
     }
 
     @Override
@@ -59,6 +73,7 @@ public class MDB extends Thread {
             if (Integer.parseInt(message[2]) != peer.getID()) {
                 switch (message[0]) {
                     case "PUTCHUNK": {
+                        System.out.println("PUTCHUNK");
                         sdis.File file = fileStorage.getStoredFilesById(message[3]);
 
                         //http://stackoverflow.com/questions/642897/removing-an-element-from-an-array-java

@@ -8,16 +8,20 @@ import sdis.ReclaimThread;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MC extends Thread {
     private Peer peer;
     public ConcurrentLinkedQueue<DatagramPacket> messageQueue = new ConcurrentLinkedQueue<>();
+    private ArrayList<String> ignoreList;
     private FileStorage fileStorage;
+    private volatile boolean reclaiming;
 
     public MC(Peer p, FileStorage fileSt) {
         peer = p;
         fileStorage = fileSt;
+        reclaiming = false;
     }
 
     @Override
@@ -87,7 +91,7 @@ public class MC extends Thread {
                         break;
                     }
                     case "REMOVED": {
-                        new ReclaimThread(peer, message[3], Integer.parseInt(message[4]), address).start();
+                            new ReclaimThread(peer, message[3], Integer.parseInt(message[4]), address).start();
                         break;
                     }
                     default:

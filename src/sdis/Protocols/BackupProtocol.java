@@ -18,11 +18,11 @@ public class BackupProtocol {
         final String filePath = System.getProperty("user.dir") + java.io.File.separator + filename;
 
         try {
-        if (Files.isDirectory(Paths.get(filePath)) || !Files.exists(Paths.get(filePath)))
-                    throw new IOException();
+            if (Files.isDirectory(Paths.get(filePath)) || !Files.exists(Paths.get(filePath)))
+                throw new IOException();
 
         } catch(IOException e){
-                System.out.println("Error: Not a valid path for a file!");
+            System.out.println("Error: Not a valid path for a file!");
         }
 
         //Grau de replicacao
